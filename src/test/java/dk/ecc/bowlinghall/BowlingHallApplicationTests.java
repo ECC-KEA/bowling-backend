@@ -1,10 +1,12 @@
-package dk.ecc.bowlingbackend;
+package dk.ecc.bowlinghall;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
-class BowlingBackendApplicationTests {
+@ActiveProfiles("test")
+class BowlingHallApplicationTests {
 
 	@Test
 	void contextLoads() {
