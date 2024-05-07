@@ -17,6 +17,8 @@ public class AirHockeyBooking {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String customerEmail;
+
     @CreationTimestamp
     private LocalDateTime created_at;
 
