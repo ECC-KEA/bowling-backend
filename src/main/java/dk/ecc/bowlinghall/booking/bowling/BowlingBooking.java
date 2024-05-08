@@ -1,36 +1,18 @@
+// BowlingBooking subclass
 package dk.ecc.bowlinghall.booking.bowling;
 
-import dk.ecc.bowlinghall.booking.Status;
-import jakarta.persistence.*;
+import dk.ecc.bowlinghall.booking.Booking;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-public class BowlingBooking {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String customerEmail;
-
-    @CreationTimestamp
-    private LocalDateTime created_at;
-
+public class BowlingBooking extends Booking {
     @ManyToOne
     private BowlingLane lane;
-
-    private LocalDateTime start;
-
-    private LocalDateTime end;
-
-    @Enumerated(EnumType.STRING)
-    private Status status;
-
-
 }

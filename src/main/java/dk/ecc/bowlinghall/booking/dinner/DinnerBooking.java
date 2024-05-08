@@ -1,34 +1,16 @@
+// DinnerBooking subclass
 package dk.ecc.bowlinghall.booking.dinner;
 
-import dk.ecc.bowlinghall.booking.Status;
-import jakarta.persistence.*;
+import dk.ecc.bowlinghall.booking.Booking;
+import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-public class DinnerBooking {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String customerEmail;
-
-    @CreationTimestamp
-    private LocalDateTime created_at;
-
-    private LocalDateTime start;
-
-    private LocalDateTime end;
-
+public class DinnerBooking extends Booking {
     private int numberOfGuests;
-
-    @Enumerated(EnumType.STRING)
-    private Status status;
-
 }
