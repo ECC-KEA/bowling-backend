@@ -1,4 +1,3 @@
-// AirHockeyBooking subclass
 package dk.ecc.bowlinghall.booking.airhockey;
 
 import dk.ecc.bowlinghall.booking.Booking;

@@ -1,4 +1,3 @@
-// BowlingBooking subclass
 package dk.ecc.bowlinghall.booking.bowling;
 
 import dk.ecc.bowlinghall.booking.Booking;
