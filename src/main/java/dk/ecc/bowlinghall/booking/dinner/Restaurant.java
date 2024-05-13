@@ -70,4 +70,8 @@ public class Restaurant {
         return capacities.stream().min(Integer::compareTo).orElse(0);
     }
 
+    public void addBooking(DinnerBooking booking) {
+        bookings.add(booking);
+    }
+
 }

@@ -2,6 +2,7 @@
 package dk.ecc.bowlinghall.booking;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -35,5 +36,13 @@ public abstract class Booking {
         this.start = start;
         this.end = end;
         this.status = Status.BOOKED;
+    }
+
+    public Booking(Long id, String customerEmail, LocalDateTime start, LocalDateTime end, Status status) {
+        this.id = id;
+        this.customerEmail = customerEmail;
+        this.start = start;
+        this.end = end;
+        this.status = status;
     }
 }

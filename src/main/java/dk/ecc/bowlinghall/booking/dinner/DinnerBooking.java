@@ -2,7 +2,9 @@
 package dk.ecc.bowlinghall.booking.dinner;
 
 import dk.ecc.bowlinghall.booking.Booking;
+import dk.ecc.bowlinghall.booking.Status;
 import jakarta.persistence.Entity;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,6 +20,11 @@ public class DinnerBooking extends Booking {
 
     public DinnerBooking(int numberOfGuests, String customerEmail, LocalDateTime start, LocalDateTime end) {
         super(customerEmail, start, end);
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    public DinnerBooking(Long id, int numberOfGuests, String customerEmail, LocalDateTime start, LocalDateTime end, Status status) {
+        super(id, customerEmail, start, end, status);
         this.numberOfGuests = numberOfGuests;
     }
 }

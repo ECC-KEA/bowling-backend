@@ -10,4 +10,8 @@ public class RestaurantService {
     public RestaurantService(RestaurantRepository restaurantRepository) {
         this.restaurantRepository = restaurantRepository;
     }
+
+    public Restaurant getRestaurant(){
+        return restaurantRepository.findAll().get(0);
+    }
 }
