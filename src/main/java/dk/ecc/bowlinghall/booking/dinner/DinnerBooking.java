@@ -7,10 +7,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 public class DinnerBooking extends Booking {
     private int numberOfGuests;
+
+    public DinnerBooking(int numberOfGuests, String customerEmail, LocalDateTime start, LocalDateTime end) {
+        super(customerEmail, start, end);
+        this.numberOfGuests = numberOfGuests;
+    }
 }

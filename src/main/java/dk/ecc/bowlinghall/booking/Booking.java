@@ -29,4 +29,11 @@ public abstract class Booking {
 
     @Enumerated(EnumType.STRING)
     private Status status;
+
+    public Booking(String customerEmail, LocalDateTime start, LocalDateTime end) {
+        this.customerEmail = customerEmail;
+        this.start = start;
+        this.end = end;
+        this.status = Status.BOOKED;
+    }
 }
