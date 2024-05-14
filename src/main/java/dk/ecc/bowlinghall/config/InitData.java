@@ -7,8 +7,7 @@ import dk.ecc.bowlinghall.booking.bowling.BowlingLaneRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.stream.IntStream;
 
 @Component
 public class InitData implements CommandLineRunner {
@@ -23,24 +22,11 @@ public class InitData implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // create bowling lanes
-        List<BowlingLane> bowlingLanes = new ArrayList<>();
-        for (int i = 0; i < 24; i++) {
-            boolean childFriendly = i < 4; // first 4 lanes are child-friendly
-            bowlingLanes.add(new BowlingLane(200, childFriendly));
-        }
-
-        // create air hockey tables
-        List<AirHockeyTable> airHockeyTables = new ArrayList<>();
-        for (int i = 0; i < 6; i++) {
-            airHockeyTables.add(new AirHockeyTable(50));
-        }
-
         if (bowlingLaneRepository.count() == 0) {
-            bowlingLaneRepository.saveAll(bowlingLanes);
+            IntStream.range(0, 24).mapToObj(i -> new BowlingLane(200, i < 4)).forEach(bowlingLaneRepository::save);
         }
         if (airHockeyTableRepository.count() == 0) {
-            airHockeyTableRepository.saveAll(airHockeyTables);
+            IntStream.range(0, 6).mapToObj(i -> new AirHockeyTable(50)).forEach(airHockeyTableRepository::save);
         }
     }
 }
