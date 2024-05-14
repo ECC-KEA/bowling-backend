@@ -15,4 +15,8 @@ public class AirHockeyTable {
     @Id @GeneratedValue
     private Long id;
     private double price_per_hour;
+
+    public AirHockeyTable(double price_per_hour) {
+        this.price_per_hour = price_per_hour;
+    }
 }

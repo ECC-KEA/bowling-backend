@@ -19,4 +19,11 @@ public class BowlingLane {
     private double price_per_hour;
 
     private boolean childFriendly;
+
+    public BowlingLane(double price_per_hour, boolean childFriendly) {
+        this.price_per_hour = price_per_hour;
+        this.childFriendly = childFriendly;
+    }
 }
+
+
