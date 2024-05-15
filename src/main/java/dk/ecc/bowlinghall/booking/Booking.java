@@ -49,6 +49,7 @@ public abstract class Booking {
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
+        if(id == null) return false;
         Booking booking = (Booking) obj;
         return id.equals(booking.id);
     }
