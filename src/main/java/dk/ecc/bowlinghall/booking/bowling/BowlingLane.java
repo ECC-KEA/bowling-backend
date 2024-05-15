@@ -21,7 +21,6 @@ public class BowlingLane {
 
     private boolean childFriendly;
 
-    @Transient
     @OneToMany
     private List<BowlingBooking> bookings = new ArrayList<>();
 
