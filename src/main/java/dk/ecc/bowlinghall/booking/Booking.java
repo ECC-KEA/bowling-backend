@@ -21,7 +21,7 @@ public abstract class Booking {
     private String customerEmail;
 
     @CreationTimestamp
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
     private LocalDateTime start;
 
