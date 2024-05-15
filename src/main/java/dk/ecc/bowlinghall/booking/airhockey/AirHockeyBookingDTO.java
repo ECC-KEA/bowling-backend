@@ -2,7 +2,7 @@ package dk.ecc.bowlinghall.booking.airhockey;
 
 import dk.ecc.bowlinghall.booking.Status;
 
-public record AirHockeyBookingResponseDTO(
+public record AirHockeyBookingDTO(
         Long id,
         Long tableId,
         String customerEmail,

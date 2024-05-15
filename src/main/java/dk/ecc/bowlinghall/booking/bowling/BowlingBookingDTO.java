@@ -1,11 +1,16 @@
 package dk.ecc.bowlinghall.booking.bowling;
 
+import dk.ecc.bowlinghall.booking.Status;
+
 import java.time.LocalDateTime;
 
-public record BowlingBookingRequestDTO(
+public record BowlingBookingDTO(
+        Long id,
+        Long laneId,
+        String customerEmail,
         LocalDateTime start,
         LocalDateTime end,
-        String customerEmail,
+        Status status,
         boolean childFriendly
 ) {
 }
