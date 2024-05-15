@@ -2,14 +2,10 @@ package dk.ecc.bowlinghall.booking.dinner;
 
 import dk.ecc.bowlinghall.booking.Status;
 import dk.ecc.bowlinghall.error.ValidationException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
@@ -17,155 +13,153 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 class DinnerBookingServiceTest {
 
-    @InjectMocks
+    @Autowired
     private DinnerBookingService dinnerBookingService;
 
-    @Mock
-    private DinnerBookingRepository dinnerBookingRepository;
+    private Long id = 1L;
 
-    @Mock
-    private RestaurantService restaurantService;
+    @BeforeEach
+    void setUp(@Autowired RestaurantRepository restaurantRepository, @Autowired DinnerBookingRepository dinnerBookingRepository) {
+        var restaurant = new Restaurant(10);
+        restaurantRepository.save(restaurant);
+
+        var booking = new DinnerBooking(
+                null,
+                5,
+        "test@test.com",
+                LocalDateTime.of(2025, 1, 1, 13, 0),
+                LocalDateTime.of(2025, 1, 1, 14, 0),
+                Status.BOOKED
+        );
+        var bookings = new ArrayList<>(List.of(booking));
+        var newBooking = dinnerBookingRepository.save(booking);
+        id = newBooking.getId();
+
+        restaurant.setBookings(bookings);
+        restaurantRepository.save(restaurant);
+    }
+
+    @AfterEach
+    void tearDown(@Autowired JdbcTemplate jdbcTemplate) {
+        jdbcTemplate.execute("DELETE FROM restaurant_bookings");
+        jdbcTemplate.execute("DELETE FROM dinner_booking");
+        jdbcTemplate.execute("DELETE FROM restaurant");
+    }
 
     @Test
     void get() {
-        var booking = new DinnerBooking(
-                5,
-                "test@test.com",
-                LocalDateTime.of(2025, 1, 1, 12, 0),
-                LocalDateTime.of(2025, 1, 1, 13, 0)
-        );
-        when(dinnerBookingRepository.findById(1L)).thenReturn(java.util.Optional.of(booking));
 
-        var result = dinnerBookingService.get(1L);
-
-        assertEquals(result.customerEmail(), "test@test.com");
-        assertEquals(result.numberOfGuests(), 5);
-        assertEquals(result.start(), LocalDateTime.of(2025, 1, 1, 12, 0));
-        assertEquals(result.end(), LocalDateTime.of(2025, 1, 1, 13, 0));
     }
 
     @Test
     void create() {
-        var restaurant = new Restaurant(10);
-        when(restaurantService.getRestaurant()).thenReturn(restaurant);
-        var booking = new DinnerBookingDTO(
+        var newBooking = new DinnerBookingDTO(
                 null,
                 "test@test.com",
-                LocalDateTime.of(2025, 1, 1, 12, 0),
                 LocalDateTime.of(2025, 1, 1, 13, 0),
-                null,
-                3);
+                LocalDateTime.of(2025, 1, 1, 14, 0),
+                Status.BOOKED,
+                5
+        );
 
-        var result = dinnerBookingService.create(booking);
+        var createdBooking = dinnerBookingService.create(newBooking);
 
-        assertEquals(result.customerEmail(), "test@test.com");
-        assertEquals(result.numberOfGuests(), 3);
-        assertEquals(result.start(), LocalDateTime.of(2025, 1, 1, 12, 0));
-        assertEquals(result.end(), LocalDateTime.of(2025, 1, 1, 13, 0));
+        assertNotNull(createdBooking.id());
+        assertEquals(newBooking.customerEmail(), createdBooking.customerEmail());
+        assertEquals(newBooking.start(), createdBooking.start());
+        assertEquals(newBooking.end(), createdBooking.end());
+        assertEquals(newBooking.status(), createdBooking.status());
+        assertEquals(newBooking.numberOfGuests(), createdBooking.numberOfGuests());
     }
 
     @Test
-    void createFullyBooked() {
-        var restaurant = new Restaurant(10);
-        var booking1 = new DinnerBooking(
-                10,
-                "test@test.com",
-                LocalDateTime.of(2025, 1, 1, 12, 0),
-                LocalDateTime.of(2025, 1, 1, 13, 0)
-        );
-        restaurant.addBooking(booking1);
-        when(restaurantService.getRestaurant()).thenReturn(restaurant);
-
-        var booking2 = new DinnerBookingDTO(
+    void createNotEnoughCapacityInRestaurant() {
+        var newBooking = new DinnerBookingDTO(
                 null,
                 "test@test.com",
-                LocalDateTime.of(2025, 1, 1, 12, 0),
                 LocalDateTime.of(2025, 1, 1, 13, 0),
-                null,
-                1);
+                LocalDateTime.of(2025, 1, 1, 14, 0),
+                Status.BOOKED,
+                9
+        );
 
-        assertThrows(ValidationException.class, () -> dinnerBookingService.create(booking2));
+        assertThrows(ValidationException.class, () -> dinnerBookingService.create(newBooking));
     }
 
     @Test
-    void update() {
-        var restaurant = new Restaurant(10);
-        when(restaurantService.getRestaurant()).thenReturn(restaurant);
-        var booking = new DinnerBooking(
-                1L,
-                5,
-                "test@test.com",
-                LocalDateTime.of(2025, 1, 1, 12, 0),
-                LocalDateTime.of(2025, 1, 1, 13, 0),
-                Status.BOOKED
-        );
-        when(dinnerBookingRepository.findById(1L)).thenReturn(java.util.Optional.of(booking));
-
-        var updateBooking = new DinnerBookingDTO(
-                1L,
-                "updated@updated.com",
+    void updateEnoughCapacity() {
+        var updatedBooking = new DinnerBookingDTO(
+                id,
+                "updated@test.com",
                 LocalDateTime.of(2025, 1, 1, 13, 0),
                 LocalDateTime.of(2025, 1, 1, 14, 0),
                 Status.PAID,
-                3);
+                9
+        );
 
-        var result = dinnerBookingService.update(1L, updateBooking);
+        var createdBooking = dinnerBookingService.update(id, updatedBooking);
 
-        assertEquals("updated@updated.com", result.customerEmail());
-        assertEquals(3, result.numberOfGuests());
-        assertEquals(LocalDateTime.of(2025, 1, 1, 13, 0), result.start());
-        assertEquals(LocalDateTime.of(2025, 1, 1, 14, 0), result.end());
-        assertEquals(Status.PAID, result.status());
+        assertEquals(updatedBooking.id(), createdBooking.id());
+        assertEquals(updatedBooking.customerEmail(), createdBooking.customerEmail());
+        assertEquals(updatedBooking.start(), createdBooking.start());
+        assertEquals(updatedBooking.end(), createdBooking.end());
+        assertEquals(updatedBooking.status(), createdBooking.status());
+        assertEquals(updatedBooking.numberOfGuests(), createdBooking.numberOfGuests());
     }
+
+    @Test
+    void updateNotEnoughCapacity() {
+        var updatedBooking = new DinnerBookingDTO(
+                id,
+                "updated@test.com",
+                LocalDateTime.of(2025, 1, 1, 13, 0),
+                LocalDateTime.of(2025, 1, 1, 14, 0),
+                Status.PAID,
+                11
+        );
+
+        assertThrows(ValidationException.class, () -> dinnerBookingService.update(id, updatedBooking));
+    }
+
 
     @Test
     void patch() {
+            var updatedBooking = new DinnerBookingDTO(
+                    id,
+                    "updated@test.com",
+                    null,
+                    null,
+                    Status.BOOKED,
+                    3
+            );
 
+            var createdBooking = dinnerBookingService.patch(id, updatedBooking);
+
+            assertEquals(updatedBooking.id(), createdBooking.id());
+            assertEquals(updatedBooking.customerEmail(), createdBooking.customerEmail());
+            assertEquals(LocalDateTime.of(2025, 1, 1, 13, 0), createdBooking.start());
+            assertEquals(LocalDateTime.of(2025, 1, 1, 14, 0), createdBooking.end());
+            assertEquals(updatedBooking.status(), createdBooking.status());
+            assertEquals(updatedBooking.numberOfGuests(), createdBooking.numberOfGuests());
     }
 
     @Test
-    void addToRestaurantNoPriorBookings() {
-        var restaurant = new Restaurant(10);
-        when(restaurantService.getRestaurant()).thenReturn(restaurant);
-
-        var booking = new DinnerBooking(
-                5,
-                "test@test.com",
-                LocalDateTime.of(2025, 1, 1, 12, 0),
-                LocalDateTime.of(2025, 1, 1, 13, 0)
+    void patchNotEnoughCapacity() {
+        var updatedBooking = new DinnerBookingDTO(
+                id,
+                null,
+                null,
+                null,
+                null,
+                11
         );
 
-        dinnerBookingService.addToRestaurant(booking);
-
-        assertEquals(1, restaurant.getBookings().size());
+        assertThrows(ValidationException.class, () -> dinnerBookingService.patch(id, updatedBooking));
     }
 
-    @Test
-    void addToRestaurantFullyBooked() {
-        var restaurant = new Restaurant(10);
-        var booking1 = new DinnerBooking(
-                10,
-                "test@test.com",
-                LocalDateTime.of(2025, 1, 1, 12, 0),
-                LocalDateTime.of(2025, 1, 1, 13, 0)
-        );
-        restaurant.addBooking(booking1);
-        when(restaurantService.getRestaurant()).thenReturn(restaurant);
-
-        var booking2 = new DinnerBooking(
-                1,
-                "test@test.com",
-                LocalDateTime.of(2025, 1, 1, 12, 0),
-                LocalDateTime.of(2025, 1, 1, 13, 0)
-        );
-
-        assertThrows(ValidationException.class, () -> dinnerBookingService.addToRestaurant(booking2));
-        assertEquals(1, restaurant.getBookings().size());
-    }
 }

@@ -230,5 +230,4 @@ class RestaurantTest {
 
         assertEquals(5, remainingCapacity);
     }
-
 }

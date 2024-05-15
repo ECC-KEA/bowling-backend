@@ -45,4 +45,12 @@ public abstract class Booking {
         this.end = end;
         this.status = status;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Booking booking = (Booking) obj;
+        return id.equals(booking.id);
+    }
 }

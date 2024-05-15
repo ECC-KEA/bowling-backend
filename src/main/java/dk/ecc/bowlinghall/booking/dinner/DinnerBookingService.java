@@ -1,7 +1,6 @@
 package dk.ecc.bowlinghall.booking.dinner;
 
 import dk.ecc.bowlinghall.error.NotFoundException;
-import dk.ecc.bowlinghall.error.ValidationException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -45,12 +44,16 @@ public class DinnerBookingService {
 
     public DinnerBookingDTO create(DinnerBookingDTO dinnerBookingDTO) {
         DinnerBooking dinnerBooking = fromDTO(dinnerBookingDTO);
-        dinnerBookingRepository.save(addToRestaurant(dinnerBooking));
+        addToRestaurant(dinnerBooking);
+        dinnerBookingRepository.save(dinnerBooking);
         return toDTO(dinnerBooking);
     }
 
     public DinnerBookingDTO update(Long id, DinnerBookingDTO dinnerBookingDTO) {
         var dinnerBooking = dinnerBookingRepository.findById(id).orElseThrow(() -> new NotFoundException("Booking not found"));
+
+        // Remove booking and try to add it again after updating values
+        restaurantService.removeBooking(dinnerBooking);
 
         dinnerBooking.setCustomerEmail(dinnerBookingDTO.customerEmail());
         dinnerBooking.setStart(dinnerBookingDTO.start());
@@ -58,47 +61,52 @@ public class DinnerBookingService {
         dinnerBooking.setNumberOfGuests(dinnerBookingDTO.numberOfGuests());
         dinnerBooking.setStatus(dinnerBookingDTO.status());
 
-        dinnerBookingRepository.save(addToRestaurant(dinnerBooking));
+        addToRestaurant(dinnerBooking);
+
+        dinnerBookingRepository.save(dinnerBooking);
         return toDTO(dinnerBooking);
     }
 
     public DinnerBookingDTO patch(Long id, DinnerBookingDTO dinnerBookingDTO) {
         var dinnerBooking = dinnerBookingRepository.findById(id).orElseThrow(() -> new NotFoundException("Booking not found"));
 
-        if(dinnerBookingDTO.customerEmail() != null){
+        // Remove booking and try to add it again after updating values
+        restaurantService.removeBooking(dinnerBooking);
+
+        if (dinnerBookingDTO.customerEmail() != null) {
             dinnerBooking.setCustomerEmail(dinnerBookingDTO.customerEmail());
         }
-        if(dinnerBookingDTO.start() != null){
+        if (dinnerBookingDTO.start() != null) {
             dinnerBooking.setStart(dinnerBookingDTO.start());
         }
-        if(dinnerBookingDTO.end() != null){
+        if (dinnerBookingDTO.end() != null) {
             dinnerBooking.setEnd(dinnerBookingDTO.end());
         }
-        if(dinnerBookingDTO.numberOfGuests() != null){
+        if (dinnerBookingDTO.numberOfGuests() != null) {
             dinnerBooking.setNumberOfGuests(dinnerBookingDTO.numberOfGuests());
         }
-        if(dinnerBookingDTO.status() != null){
+        if (dinnerBookingDTO.status() != null) {
             dinnerBooking.setStatus(dinnerBookingDTO.status());
         }
 
-        dinnerBookingRepository.save(addToRestaurant(dinnerBooking));
+        addToRestaurant(dinnerBooking);
+
+        dinnerBookingRepository.save(dinnerBooking);
         return toDTO(dinnerBooking);
     }
 
-    public DinnerBooking addToRestaurant(DinnerBooking dinnerBooking) {
-        Restaurant restaurant = restaurantService.getRestaurant();
-        if(restaurant == null){
-            throw new RuntimeException("No restaurant found");
+    public void addToRestaurant(DinnerBooking dinnerBooking) {
+        if (dinnerBooking == null) {
+            throw new RuntimeException("No booking found");
         }
-        var remainingCapacityForTimeslot = restaurant
-                .getRemainingCapacityByStartAndEnd(
-                        dinnerBooking.getStart(),
-                        dinnerBooking.getEnd()
-                );
-        if(dinnerBooking.getNumberOfGuests() > remainingCapacityForTimeslot){
-            throw new ValidationException("Not enough capacity");
+        switch (dinnerBooking.getStatus()) {
+            case CANCELLED, NO_SHOW:
+                break;
+            case PAID, BOOKED:
+                restaurantService.addBooking(dinnerBooking);
+                break;
+            default:
+                throw new RuntimeException("Invalid status");
         }
-        restaurant.addBooking(dinnerBooking);
-        return dinnerBooking;
     }
 }

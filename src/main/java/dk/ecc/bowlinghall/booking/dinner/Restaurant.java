@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Entity
@@ -19,12 +20,16 @@ public class Restaurant {
 
     private int capacity;
 
-    @Transient
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DinnerBooking> bookings = new ArrayList<>();
 
     public Restaurant(int capacity) {
         this.capacity = capacity;
+    }
+
+    public Restaurant(int capacity, List<DinnerBooking> bookings) {
+        this.capacity = capacity;
+        this.bookings = bookings;
     }
 
     /**
@@ -49,15 +54,7 @@ public class Restaurant {
      * @throws IllegalArgumentException if start and end are not on the same day
      */
     public int getRemainingCapacityByStartAndEnd(LocalDateTime start, LocalDateTime end) {
-        if(start.isAfter(end)) {
-            throw new IllegalArgumentException("Start time must be before end time");
-        }
-        if(!start.toLocalDate().equals(end.toLocalDate())) {
-            throw new IllegalArgumentException("Start and end must be on the same day");
-        }
-        if(start.equals(end)) {
-            return getRemainingCapacityByTimeslot(start);
-        }
+        validateTimes(start, end);
         var amountOfTimeslots = end.getHour() - start.getHour();
         var capacities = new ArrayList<Integer>();
         for(int i = 0; i < amountOfTimeslots; i++) {
@@ -72,6 +69,18 @@ public class Restaurant {
 
     public void addBooking(DinnerBooking booking) {
         bookings.add(booking);
+    }
+
+    public void removeBooking(DinnerBooking booking){
+        bookings.remove(booking);
+    }
+
+    public void validateTimes(LocalDateTime start, LocalDateTime end){
+        if(start.isAfter(end)) throw new IllegalArgumentException("Start time must be before end time");
+        if(!start.toLocalDate().equals(end.toLocalDate())) throw new IllegalArgumentException("Start and end must be on the same day");
+        if(start.equals(end)) throw new IllegalArgumentException("Start and end must be different times");
+        if(start.isBefore(LocalDateTime.now())) throw new IllegalArgumentException("Start time must be in the future");
+        if(end.isBefore(LocalDateTime.now())) throw new IllegalArgumentException("End time must be in the future");
     }
 
 }
