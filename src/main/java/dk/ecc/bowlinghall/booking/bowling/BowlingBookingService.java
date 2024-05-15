@@ -1,5 +1,6 @@
 package dk.ecc.bowlinghall.booking.bowling;
 
+import dk.ecc.bowlinghall.booking.Status;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -60,5 +61,12 @@ public class BowlingBookingService {
     public List<BowlingBookingDTO> getBowlingBookingsByCustomerEmail(String customerEmail) {
         List<BowlingBooking> bookings = bowlingBookingRepository.findByCustomerEmail(customerEmail);
         return bookings.stream().map(this::toDTO).toList();
+    }
+
+    public BowlingBookingDTO cancelBowlingBooking(Long id) {
+        BowlingBooking booking = bowlingBookingRepository.findById(id).orElseThrow();
+        booking.setStatus(Status.CANCELLED);
+        bowlingBookingRepository.save(booking);
+        return toDTO(booking);
     }
 }

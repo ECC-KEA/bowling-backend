@@ -2,11 +2,7 @@ package dk.ecc.bowlinghall.booking.bowling;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,7 +21,6 @@ public class BowlingBookingController {
         return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
     }
 
-
     @GetMapping("/bowling")
     public List<BowlingBookingDTO> getBowlingBookings() {
         return bowlingBookingService.getBowlingBookings();
@@ -39,5 +34,10 @@ public class BowlingBookingController {
     @GetMapping("/bowling/email/{customerEmail}")
     public List<BowlingBookingDTO> getBowlingBookingsByCustomerEmail(@PathVariable String customerEmail) {
         return bowlingBookingService.getBowlingBookingsByCustomerEmail(customerEmail);
+    }
+
+    @PatchMapping("/bowling/cancel/{id}")
+    public ResponseEntity<BowlingBookingDTO> cancelBowlingBooking(@PathVariable Long id) {
+        return ResponseEntity.ok(bowlingBookingService.cancelBowlingBooking(id));
     }
 }
