@@ -14,5 +14,9 @@ import lombok.Setter;
 public class AirHockeyTable {
     @Id @GeneratedValue
     private Long id;
-    private double price_per_hour;
+    private double pricePerHour;
+
+    public AirHockeyTable(double pricePerHour) {
+        setPricePerHour(pricePerHour);
+    }
 }

@@ -16,7 +16,12 @@ public class BowlingLane {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private double price_per_hour;
+    private double pricePerHour;
 
     private boolean childFriendly;
+
+    public BowlingLane(double pricePerHour, boolean childFriendly) {
+        setPricePerHour(pricePerHour);
+        setChildFriendly(childFriendly);
+    }
 }

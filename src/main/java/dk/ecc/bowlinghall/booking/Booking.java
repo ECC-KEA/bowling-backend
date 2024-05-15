@@ -21,7 +21,7 @@ public abstract class Booking {
     private String customerEmail;
 
     @CreationTimestamp
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
     private LocalDateTime start;
 
@@ -29,4 +29,11 @@ public abstract class Booking {
 
     @Enumerated(EnumType.STRING)
     private Status status;
+
+    public Booking(String customerEmail, LocalDateTime start, LocalDateTime end, Status status) {
+        setCustomerEmail(customerEmail);
+        setStart(start);
+        setEnd(end);
+        setStatus(status);
+    }
 }
