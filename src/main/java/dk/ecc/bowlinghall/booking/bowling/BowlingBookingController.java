@@ -16,8 +16,8 @@ public class BowlingBookingController {
     }
 
     @PostMapping("/bowling")
-    public ResponseEntity<BowlingBookingResponseDTO> addBowlingBooking(@RequestBody BowlingBookingRequestDTO bowlingBookingRequestDTO) {
-        BowlingBookingResponseDTO responseDTO = bowlingBookingService.addBowlingBooking(bowlingBookingRequestDTO);
+    public ResponseEntity<BowlingBookingDTO> addBowlingBooking(@RequestBody BowlingBookingDTO bowlingBookingDTO) {
+        BowlingBookingDTO responseDTO = bowlingBookingService.addBowlingBooking(bowlingBookingDTO);
         return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
     }
 

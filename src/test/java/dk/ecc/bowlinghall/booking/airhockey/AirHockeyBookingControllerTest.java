@@ -26,7 +26,7 @@ class AirHockeyBookingControllerTest {
                 .get().uri("/airhockey")
                 .exchange()
                 .expectStatus().isOk()
-                .expectBodyList(AirHockeyBookingResponseDTO.class)
+                .expectBodyList(AirHockeyBookingDTO.class)
                 .value(response -> {
                     assertNotNull(response);
                     assertFalse(response.isEmpty());

@@ -1,6 +1,5 @@
 package dk.ecc.bowlinghall.booking.bowling;
 
-import dk.ecc.bowlinghall.booking.Status;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,8 +13,8 @@ public class BowlingBookingService {
         this.bowlingLaneService = bowlingLaneService;
     }
 
-    public BowlingBookingResponseDTO addBowlingBooking(BowlingBookingRequestDTO bowlingBookingRequestDTO) {
-        var booking = toEntity(bowlingBookingRequestDTO);
+    public BowlingBookingDTO addBowlingBooking(BowlingBookingDTO bowlingBookingDTO) {
+        var booking = toEntity(bowlingBookingDTO);
         var savedBooking = bowlingBookingRepository.save(booking);
 
         var lane = savedBooking.getLane();
@@ -25,23 +24,23 @@ public class BowlingBookingService {
         return toDTO(savedBooking);
     }
 
-    private BowlingBookingResponseDTO toDTO(BowlingBooking booking) {
-        return new BowlingBookingResponseDTO(
+    private BowlingBookingDTO toDTO(BowlingBooking booking) {
+        return new BowlingBookingDTO(
                 booking.getId(),
                 booking.getLane().getId(),
                 booking.getCustomerEmail(),
                 booking.getStart(),
                 booking.getEnd(),
-                booking.getStatus()
+                booking.getStatus(),
+                booking.getLane().isChildFriendly()
         );
     }
 
-    private BowlingBooking toEntity(BowlingBookingRequestDTO requestDTO) {
+    private BowlingBooking toEntity(BowlingBookingDTO requestDTO) {
         return new BowlingBooking(
                 requestDTO.customerEmail(),
                 requestDTO.start(),
                 requestDTO.end(),
-                Status.BOOKED,
                 bowlingLaneService.findFirstAvailableBowlingLane(requestDTO.start(), requestDTO.end(), requestDTO.childFriendly())
         );
     }

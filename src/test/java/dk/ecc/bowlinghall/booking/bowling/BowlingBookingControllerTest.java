@@ -19,7 +19,15 @@ class BowlingBookingControllerTest {
     @Autowired
     private WebTestClient webClient;
 
-    private final BowlingBookingRequestDTO bowlingBookingRequestDTO = new BowlingBookingRequestDTO(LocalDateTime.of(2024, 5, 20, 12, 0), LocalDateTime.of(2024, 5, 20, 14, 0), "test@test.com", false);
+    private final BowlingBookingDTO bowlingBookingDTO = new BowlingBookingDTO(
+            null,
+            null,
+            "test@test.com",
+            LocalDateTime.of(2024, 5, 20, 12, 0),
+            LocalDateTime.of(2024, 5, 20, 14, 0),
+            null,
+            false);
+
 
     @AfterAll
     static void cleanUp(@Autowired JdbcTemplate jdbcTemplate) {
@@ -39,7 +47,7 @@ class BowlingBookingControllerTest {
                 .get().uri("/bowling")
                 .exchange()
                 .expectStatus().isOk()
-                .expectBodyList(BowlingBookingResponseDTO.class)
+                .expectBodyList(BowlingBookingDTO.class)
                 .value(response -> {
                     assertNotNull(response);
                     assertFalse(response.isEmpty());
@@ -50,7 +58,7 @@ class BowlingBookingControllerTest {
     @Test
     void createBowlingBooking() {
         webClient.post().uri("/bowling")
-                .bodyValue(bowlingBookingRequestDTO)
+                .bodyValue(bowlingBookingDTO)
                 .exchange()
                 .expectStatus().isCreated()
                 .expectBody()
@@ -59,6 +67,7 @@ class BowlingBookingControllerTest {
                 .jsonPath("$.customerEmail").isEqualTo("test@test.com")
                 .jsonPath("$.start").isEqualTo("2024-05-20T12:00:00")
                 .jsonPath("$.end").isEqualTo("2024-05-20T14:00:00")
-                .jsonPath("$.status").isEqualTo("BOOKED");
+                .jsonPath("$.status").isEqualTo("BOOKED")
+                .jsonPath("$.childFriendly").isEqualTo(false);
     }
 }
