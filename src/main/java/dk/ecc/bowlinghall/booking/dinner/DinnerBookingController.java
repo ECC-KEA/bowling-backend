@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/dinner")
 public class DinnerBookingController {
 
     private final DinnerBookingService dinnerBookingService;
@@ -18,17 +17,17 @@ public class DinnerBookingController {
         this.dinnerBookingService = dinnerBookingService;
     }
 
-    @GetMapping
+    @GetMapping("/dinner")
     public List<DinnerBookingDTO> getDinnerBookings() {
         return dinnerBookingService.getDinnerBookings();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/dinner/{id}")
     public ResponseEntity<DinnerBookingDTO> getDinnerBooking(@PathVariable Long id) {
         return ResponseEntity.of(dinnerBookingService.getDinnerBooking(id));
     }
 
-    @GetMapping("/email/{customerEmail}")
+    @GetMapping("/dinner/email/{customerEmail}")
     public List<DinnerBookingDTO> getDinnerBookingsByEmail(@PathVariable String customerEmail) {
         return dinnerBookingService.getDinnerBookingsByEmail(customerEmail);
     }

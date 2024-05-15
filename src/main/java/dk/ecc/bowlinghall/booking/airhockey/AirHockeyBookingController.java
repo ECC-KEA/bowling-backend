@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/airhockey")
 public class AirHockeyBookingController {
 
     private final AirHockeyBookingService airHockeyBookingService;
@@ -18,17 +17,17 @@ public class AirHockeyBookingController {
         this.airHockeyBookingService = airHockeyBookingService;
     }
 
-    @GetMapping
+    @GetMapping("/airhockey")
     public List<AirHockeyBookingDTO> getAirHockeyBookings() {
         return airHockeyBookingService.getAirHockeyBookings();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/airhockey/{id}")
     public ResponseEntity<AirHockeyBookingDTO> getAirHockeyBooking(@PathVariable Long id) {
         return ResponseEntity.of(airHockeyBookingService.getAirHockeyBooking(id));
     }
 
-    @GetMapping("/email/{customerEmail}")
+    @GetMapping("/airhockey/email/{customerEmail}")
     public List<AirHockeyBookingDTO> getAirHockeyBookingsByCustomerEmail(@PathVariable String customerEmail) {
         return airHockeyBookingService.getAirHockeyBookingsByCustomerEmail(customerEmail);
     }

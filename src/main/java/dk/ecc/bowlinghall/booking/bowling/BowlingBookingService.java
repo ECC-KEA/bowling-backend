@@ -48,16 +48,6 @@ public class BowlingBookingService {
         );
     }
 
-    private BowlingBookingDTO toDTO(BowlingBooking booking) {
-        return new BowlingBookingDTO(
-                booking.getId(),
-                booking.getLane().getId(),
-                booking.getCustomerEmail(),
-                booking.getStart().toString(),
-                booking.getEnd().toString(),
-                booking.getStatus());
-    }
-
     public List<BowlingBookingDTO> getBowlingBookings() {
         List<BowlingBooking> bookings = bowlingBookingRepository.findAll();
         return bookings.stream().map(this::toDTO).toList();

@@ -27,17 +27,17 @@ public class BowlingBookingController {
     }
 
 
-    @GetMapping
+    @GetMapping("/bowling")
     public List<BowlingBookingDTO> getBowlingBookings() {
         return bowlingBookingService.getBowlingBookings();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/bowling/{id}")
     public ResponseEntity<BowlingBookingDTO> getBowlingBooking(@PathVariable Long id) {
         return ResponseEntity.of(bowlingBookingService.getBowlingBooking(id));
     }
 
-    @GetMapping("/email/{customerEmail}")
+    @GetMapping("/bowling/email/{customerEmail}")
     public List<BowlingBookingDTO> getBowlingBookingsByCustomerEmail(@PathVariable String customerEmail) {
         return bowlingBookingService.getBowlingBookingsByCustomerEmail(customerEmail);
     }

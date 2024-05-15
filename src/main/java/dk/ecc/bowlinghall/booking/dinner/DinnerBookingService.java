@@ -17,17 +17,6 @@ public class DinnerBookingService {
         this.restaurantService = restaurantService;
     }
 
-    public DinnerBookingDTO toDTO(DinnerBooking dinnerBooking) {
-        return new DinnerBookingDTO(
-                dinnerBooking.getId(),
-                dinnerBooking.getCustomerEmail(),
-                dinnerBooking.getStart(),
-                dinnerBooking.getEnd(),
-                dinnerBooking.getStatus(),
-                dinnerBooking.getNumberOfGuests()
-        );
-    }
-
     public DinnerBooking fromDTO(DinnerBookingDTO dinnerBookingDTO) {
         return new DinnerBooking(
                 dinnerBookingDTO.id(),
