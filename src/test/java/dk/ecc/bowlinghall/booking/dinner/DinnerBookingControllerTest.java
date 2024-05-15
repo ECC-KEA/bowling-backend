@@ -16,12 +16,12 @@ class DinnerBookingControllerTest {
     private WebTestClient webClient;
 
     @Test
-    void getAll(){
+    void getAll() {
         var RESTAURANT_CAPACITY = 100;
         var MINIMUM_GUESTS = 2;
         var TIMESLOTS_PER_DAY = 10;
         var DAYS_PER_REQUEST = 7;
-        var MAX_BOOKINGS = RESTAURANT_CAPACITY/MINIMUM_GUESTS*TIMESLOTS_PER_DAY*DAYS_PER_REQUEST;
+        var MAX_BOOKINGS = RESTAURANT_CAPACITY / MINIMUM_GUESTS * TIMESLOTS_PER_DAY * DAYS_PER_REQUEST;
 
         webClient
                 .get().uri("/dinner?amountOfGuests=3")

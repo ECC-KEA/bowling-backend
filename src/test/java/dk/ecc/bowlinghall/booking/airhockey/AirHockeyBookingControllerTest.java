@@ -16,17 +16,17 @@ class AirHockeyBookingControllerTest {
     private WebTestClient webClient;
 
     @Test
-    void getAll(){
+    void getAll() {
         var AIRHOCKEY_TABLES = 6;
         var TIMESLOTS_PER_DAY = 10;
         var DAYS_PER_REQUEST = 7;
-        var MAX_BOOKINGS = AIRHOCKEY_TABLES*TIMESLOTS_PER_DAY*DAYS_PER_REQUEST;
+        var MAX_BOOKINGS = AIRHOCKEY_TABLES * TIMESLOTS_PER_DAY * DAYS_PER_REQUEST;
 
         webClient
                 .get().uri("/airhockey")
                 .exchange()
                 .expectStatus().isOk()
-                .expectBodyList(AirHockeyBookingDTO.class)
+                .expectBodyList(AirHockeyBookingResponseDTO.class)
                 .value(response -> {
                     assertNotNull(response);
                     assertFalse(response.isEmpty());
