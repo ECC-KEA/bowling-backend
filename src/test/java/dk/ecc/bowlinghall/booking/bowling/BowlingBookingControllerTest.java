@@ -1,10 +1,9 @@
 package dk.ecc.bowlinghall.booking.bowling;
 
-import org.junit.jupiter.api.AfterAll;
+import dk.ecc.bowlinghall.booking.Status;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
@@ -28,13 +27,6 @@ class BowlingBookingControllerTest {
             null,
             false);
 
-
-    @AfterAll
-    static void cleanUp(@Autowired JdbcTemplate jdbcTemplate) {
-        jdbcTemplate.execute("DELETE FROM bowling_lane_bookings");
-        jdbcTemplate.execute("DELETE FROM bowling_booking");
-        jdbcTemplate.execute("DELETE FROM booking");
-    }
 
     @Test
     void getAll() {
@@ -69,5 +61,23 @@ class BowlingBookingControllerTest {
                 .jsonPath("$.end").isEqualTo("2024-05-20T14:00:00")
                 .jsonPath("$.status").isEqualTo("BOOKED")
                 .jsonPath("$.childFriendly").isEqualTo(false);
+    }
+
+    @Test
+    void updateBowlingBookingPartially() {
+        var id = 1L;
+        var body = new BowlingBookingDTO(
+                null, null, null, null, null, Status.CANCELLED, null
+        );
+        webClient.patch().uri("/bowling/{id}", id)
+                .bodyValue(body)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(BowlingBookingDTO.class)
+                .value(response -> {
+                    assertNotNull(response);
+                    assertEquals(id, response.id());
+                    assertEquals(Status.CANCELLED, response.status());
+                });
     }
 }

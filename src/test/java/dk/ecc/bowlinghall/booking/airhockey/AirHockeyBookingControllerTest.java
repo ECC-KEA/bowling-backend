@@ -7,8 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -66,13 +64,16 @@ class AirHockeyBookingControllerTest {
                 });
     }
 
+    //TODO figure out why test fails, when it succeed via Postman. - The test is identical to the one in BowlingBookingControllerTest which works.
     @Test
     void updatePartialAirHockeyBooking() {
         var id = 1L;
-        var fields = Map.of("status", Status.CANCELLED);
+        var body = new AirHockeyBookingDTO(
+                null, null, null, null, null, Status.CANCELLED
+        );
         webClient
                 .patch().uri("/airhockey/{id}", id)
-                .bodyValue(fields)
+                .bodyValue(body)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(AirHockeyBookingDTO.class)
@@ -82,5 +83,4 @@ class AirHockeyBookingControllerTest {
                     assertEquals(Status.CANCELLED, response.status());
                 });
     }
-
 }
