@@ -88,9 +88,10 @@ public class AirHockeyBookingService {
         return fieldUpdated.get() ? booking.map(airHockeyBookingRepository::save).map(this::toDTO).orElse(null) : null;
     }
 
-    private Map<String, Object> dtoToMap(AirHockeyBookingDTO dto) {
+    public Map<String, Object> dtoToMap(AirHockeyBookingDTO dto) {
         Map<String, Object> map = new HashMap<>();
-        if (dto.tableId() != null) map.put("table", dto.tableId());
+        if (dto.id() != null) map.put("id", dto.id());
+        if (dto.tableId() != null) map.put("tableId", dto.tableId());
         if (dto.customerEmail() != null) map.put("customerEmail", dto.customerEmail());
         if (dto.start() != null) map.put("start", dto.start());
         if (dto.end() != null) map.put("end", dto.end());

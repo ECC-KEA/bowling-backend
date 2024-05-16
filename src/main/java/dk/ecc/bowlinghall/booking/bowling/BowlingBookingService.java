@@ -105,6 +105,7 @@ public class BowlingBookingService {
 
     private Map<String, Object> dtoToMap(BowlingBookingDTO dto) {
         Map<String, Object> map = new HashMap<>();
+        if (dto.id() != null) map.put("id", dto.id());
         if (dto.laneId() != null) map.put("lane", dto.laneId());
         if (dto.customerEmail() != null) map.put("customerEmail", dto.customerEmail());
         if (dto.start() != null) map.put("start", dto.start());
