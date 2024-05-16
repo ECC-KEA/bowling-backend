@@ -7,11 +7,9 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -32,10 +30,11 @@ class BowlingBookingServiceTest {
         BowlingBooking booking = mock(BowlingBooking.class);
         when(bowlingBookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
 
-        Map<String, Object> fields = new HashMap<>();
-        fields.put("customerEmail", "newEmail@test.com");
+        BowlingBookingDTO dto = new BowlingBookingDTO(
+                null, null, "newEmail@test.com", null, null, null, null
+        );
 
-        bowlingBookingService.updatePartialBowlingBooking(1L, fields);
+        bowlingBookingService.updatePartialBowlingBooking(1L, dto);
 
         verify(bowlingBookingRepository).save(any());
     }
@@ -44,12 +43,13 @@ class BowlingBookingServiceTest {
     void updatePartialBowlingBookingReturnsNullWhenNoBookingFound() {
         when(bowlingBookingRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        Map<String, Object> fields = new HashMap<>();
-        fields.put("customerEmail", "newEmail@test.com");
+        BowlingBookingDTO dto = new BowlingBookingDTO(
+                null, null, "newEmail@test.com", null, null, null, null
+        );
 
-        var result = bowlingBookingService.updatePartialBowlingBooking(1L, fields);
+        var result = bowlingBookingService.updatePartialBowlingBooking(1L, dto);
 
-        assertEquals(null, result);
+        assertNull(result);
     }
 
     @Test
@@ -57,12 +57,13 @@ class BowlingBookingServiceTest {
         BowlingBooking booking = mock(BowlingBooking.class);
         when(bowlingBookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
 
-        Map<String, Object> fields = new HashMap<>();
-        fields.put("nonExistentField", "value");
+        BowlingBookingDTO dto = new BowlingBookingDTO(
+                null, null, null, null, null, null, null
+        );
 
-        bowlingBookingService.updatePartialBowlingBooking(1L, fields);
+        bowlingBookingService.updatePartialBowlingBooking(1L, dto);
 
-        verify(bowlingBookingRepository, never()).save(any());
+        verify(booking, never()).setCustomerEmail(any());
     }
 
     @Test
@@ -72,10 +73,11 @@ class BowlingBookingServiceTest {
         when(booking.getLane()).thenReturn(lane);
         when(bowlingBookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
 
-        Map<String, Object> fields = new HashMap<>();
-        fields.put("status", Status.CANCELLED);
+        BowlingBookingDTO dto = new BowlingBookingDTO(
+                null, null, null, null, null, Status.CANCELLED, null
+        );
 
-        bowlingBookingService.updatePartialBowlingBooking(1L, fields);
+        bowlingBookingService.updatePartialBowlingBooking(1L, dto);
 
         verify(lane).removeBooking(booking);
         verify(bowlingBookingRepository).save(any());
@@ -88,10 +90,11 @@ class BowlingBookingServiceTest {
         when(booking.getLane()).thenReturn(lane);
         when(bowlingBookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
 
-        Map<String, Object> fields = new HashMap<>();
-        fields.put("status", Status.NO_SHOW);
+        BowlingBookingDTO dto = new BowlingBookingDTO(
+                null, null, null, null, null, Status.NO_SHOW, null
+        );
 
-        bowlingBookingService.updatePartialBowlingBooking(1L, fields);
+        bowlingBookingService.updatePartialBowlingBooking(1L, dto);
 
         verify(lane).removeBooking(booking);
         verify(bowlingBookingRepository).save(any());
@@ -103,11 +106,11 @@ class BowlingBookingServiceTest {
         when(bowlingBookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
         when(bowlingLaneService.findFirstAvailableBowlingLane(any(), any(), anyBoolean())).thenReturn(null);
 
-        Map<String, Object> fields = new HashMap<>();
-        fields.put("start", LocalDateTime.now());
-        fields.put("end", LocalDateTime.now().plusHours(1));
+        BowlingBookingDTO dto = new BowlingBookingDTO(
+                null, null, null, LocalDateTime.now(), LocalDateTime.now().plusHours(1), null, null
+        );
 
-        assertThrows(IllegalArgumentException.class, () -> bowlingBookingService.updatePartialBowlingBooking(1L, fields));
+        assertThrows(IllegalArgumentException.class, () -> bowlingBookingService.updatePartialBowlingBooking(1L, dto));
     }
 
     @Test
@@ -115,10 +118,11 @@ class BowlingBookingServiceTest {
         BowlingBooking booking = mock(BowlingBooking.class);
         when(bowlingBookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
 
-        Map<String, Object> fields = new HashMap<>();
-        fields.put("nonExistentField", "value");
+        BowlingBookingDTO dto = new BowlingBookingDTO(
+                null, null, null, null, null, null, null
+        );
 
-        bowlingBookingService.updatePartialBowlingBooking(1L, fields);
+        bowlingBookingService.updatePartialBowlingBooking(1L, dto);
 
         verify(bowlingBookingRepository, never()).save(any());
     }
