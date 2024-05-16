@@ -1,9 +1,8 @@
 package dk.ecc.bowlinghall.booking.airhockey;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -30,5 +29,12 @@ public class AirHockeyBookingController {
     public List<AirHockeyBookingDTO> getAirHockeyBookingsByCustomerEmail(@PathVariable String customerEmail) {
         return airHockeyBookingService.getAirHockeyBookingsByCustomerEmail(customerEmail);
     }
+
+    @PatchMapping("/airhockey/{id}")
+    public ResponseEntity<AirHockeyBookingDTO> updatePartialAirHockeyBooking(@PathVariable Long id, @RequestBody AirHockeyBookingDTO dto) {
+        AirHockeyBookingDTO responseDTO = airHockeyBookingService.updatePartialAirHockeyBooking(id, dto);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
+
 
 }
