@@ -1,14 +1,13 @@
 package dk.ecc.bowlinghall.booking.airhockey;
 
+import dk.ecc.bowlinghall.booking.Status;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
+
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,6 +34,52 @@ class AirHockeyBookingControllerTest {
                     assertNotNull(response);
                     assertFalse(response.isEmpty());
                     assertTrue(response.size() <= MAX_BOOKINGS);
+                });
+    }
+
+    @Test
+    void getAirHockeyBooking() {
+        var id = 18L;
+        webClient
+                .get().uri("/airhockey/{id}", id)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(AirHockeyBookingDTO.class)
+                .value(response -> {
+                    assertNotNull(response);
+                    assertEquals(id, response.id());
+                });
+    }
+
+    @Test
+    void getAirHockeyBookingsByCustomerEmail() {
+        var customerEmail = "email@test.t";
+        webClient
+                .get().uri("/airhockey/email/{customerEmail}", customerEmail)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(AirHockeyBookingDTO.class)
+                .value(response -> {
+                    assertNotNull(response);
+                    assertFalse(response.isEmpty());
+                    assertTrue(response.stream().allMatch(booking -> booking.customerEmail().equals(customerEmail)));
+                });
+    }
+
+    @Test
+    void updatePartialAirHockeyBooking() {
+        var id = 1L;
+        var fields = Map.of("status", Status.CANCELLED);
+        webClient
+                .patch().uri("/airhockey/{id}", id)
+                .bodyValue(fields)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(AirHockeyBookingDTO.class)
+                .value(response -> {
+                    assertNotNull(response);
+                    assertEquals(id, response.id());
+                    assertEquals(Status.CANCELLED, response.status());
                 });
     }
 
