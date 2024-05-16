@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 public class BowlingBookingController {
@@ -39,8 +38,8 @@ public class BowlingBookingController {
     }
 
     @PatchMapping("/bowling/{id}")
-    public ResponseEntity<BowlingBookingDTO> updatePartialBowlingBooking(@PathVariable Long id, @RequestBody Map<String, Object> fields) {
-        BowlingBookingDTO responseDTO = bowlingBookingService.updatePartialBowlingBooking(id, fields);
+    public ResponseEntity<BowlingBookingDTO> updatePartialBowlingBooking(@PathVariable Long id, @RequestBody BowlingBookingDTO dto) {
+        BowlingBookingDTO responseDTO = bowlingBookingService.updatePartialBowlingBooking(id, dto);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 }
