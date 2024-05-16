@@ -11,6 +11,6 @@ public record BowlingBookingDTO(
         LocalDateTime start,
         LocalDateTime end,
         Status status,
-        boolean childFriendly
+        Boolean childFriendly
 ) {
 }
