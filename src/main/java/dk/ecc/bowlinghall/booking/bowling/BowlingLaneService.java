@@ -1,5 +1,6 @@
 package dk.ecc.bowlinghall.booking.bowling;
 
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -27,6 +28,7 @@ public class BowlingLaneService {
         return bowlingLaneRepository.save(bowlingLane);
     }
 
+    @Transactional
     public BowlingLane findFirstAvailableBowlingLane(LocalDateTime start, LocalDateTime end, boolean childFriendly) {
         var lanes = getBowlingLanes();
         return lanes.stream()

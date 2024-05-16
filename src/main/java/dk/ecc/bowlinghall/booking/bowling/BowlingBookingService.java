@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -57,11 +58,12 @@ public class BowlingBookingService {
      * Finally, it saves the updated BowlingBooking entity to the repository and returns the updated BowlingBookingDTO.
      *
      * @param id     The id of the BowlingBooking entity to update
-     * @param fields A map of fields to update in the BowlingBooking entity
+     * @param dto  The BowlingBookingDTO entity containing the fields to update
      * @return The updated BowlingBookingDTO entity or null if no fields were updated
      * @throws IllegalArgumentException if no lanes are available
      */
-    public BowlingBookingDTO updatePartialBowlingBooking(Long id, Map<String, Object> fields) {
+    public BowlingBookingDTO updatePartialBowlingBooking(Long id, BowlingBookingDTO dto) {
+        Map<String, Object> fields = dtoToMap(dto);
         Optional<BowlingBooking> booking = bowlingBookingRepository.findById(id);
         AtomicBoolean fieldUpdated = new AtomicBoolean(false);
         AtomicBoolean timeChanged = new AtomicBoolean(false);
@@ -99,6 +101,18 @@ public class BowlingBookingService {
             }
         }
         return fieldUpdated.get() ? booking.map(bowlingBookingRepository::save).map(this::toDTO).orElse(null) : null;
+    }
+
+    private Map<String, Object> dtoToMap(BowlingBookingDTO dto) {
+        Map<String, Object> map = new HashMap<>();
+        if (dto.laneId() != null) map.put("lane", dto.laneId());
+        if (dto.customerEmail() != null) map.put("customerEmail", dto.customerEmail());
+        if (dto.start() != null) map.put("start", dto.start());
+        if (dto.end() != null) map.put("end", dto.end());
+        if (dto.status() != null) map.put("status", dto.status());
+        if (dto.childFriendly() != null) map.put("childFriendly", dto.childFriendly());
+        return map;
+
     }
 
     private BowlingBookingDTO toDTO(BowlingBooking booking) {
