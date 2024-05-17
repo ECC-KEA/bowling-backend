@@ -21,6 +21,16 @@ public class DinnerBookingController {
         return dinnerBookingService.getDinnerBookings();
     }
 
+    @GetMapping("/dinner/week")
+    public List<DinnerBookingDTO> getDinnerBookingsWeekAhead() {
+        return dinnerBookingService.getDinnerBookingsWeekAhead();
+    }
+
+    @GetMapping("/dinner/week/{startDate}")
+    public List<DinnerBookingDTO> getDinnerBookingsWeekAhead(@PathVariable String startDate) {
+        return dinnerBookingService.getDinnerBookingsWeekAhead(startDate);
+    }
+
     @GetMapping("/dinner/{id}")
     public ResponseEntity<DinnerBookingDTO> getDinnerBooking(@PathVariable Long id) {
         return ResponseEntity.of(dinnerBookingService.getDinnerBooking(id));

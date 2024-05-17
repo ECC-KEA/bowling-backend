@@ -1,8 +1,12 @@
 package dk.ecc.bowlinghall.booking.dinner;
 
+import dk.ecc.bowlinghall.booking.airhockey.AirHockeyBooking;
+import dk.ecc.bowlinghall.booking.airhockey.AirHockeyBookingDTO;
+import dk.ecc.bowlinghall.booking.bowling.BowlingBooking;
 import dk.ecc.bowlinghall.error.NotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -124,5 +128,18 @@ public class DinnerBookingService {
     public List<DinnerBookingDTO> getDinnerBookingsByEmail(String customerEmail) {
         List<DinnerBooking> bookings = dinnerBookingRepository.findByCustomerEmail(customerEmail);
         return bookings.stream().map(this::toDTO).toList();
+    }
+
+    public List<DinnerBookingDTO> getDinnerBookingsWeekAhead() {
+        LocalDateTime now = LocalDateTime.now();
+        List<DinnerBooking> bookings = dinnerBookingRepository.findByStartAfter(now);
+        return bookings.stream().filter(booking -> booking.getStart().isBefore(now.plusWeeks(1))).map(this::toDTO).toList();
+    }
+
+    public List<DinnerBookingDTO> getDinnerBookingsWeekAhead(String startDate) {
+        LocalDateTime parsedStartDate = LocalDateTime.parse(startDate);
+        List<DinnerBooking> bookings = dinnerBookingRepository.findByStartAfter(parsedStartDate);
+        return bookings.stream().filter(booking -> booking.getStart().isBefore(parsedStartDate.plusWeeks(1))).map(this::toDTO).toList();
+
     }
 }

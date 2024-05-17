@@ -21,6 +21,16 @@ public class AirHockeyBookingController {
         return airHockeyBookingService.getAirHockeyBookings();
     }
 
+    @GetMapping("/airhockey/week")
+    public List<AirHockeyBookingDTO> getAirHockeyBookingsWeekAhead() {
+        return airHockeyBookingService.getAirHockeyBookingsWeekAhead();
+    }
+
+    @GetMapping("/airhockey/week/{startDate}")
+    public List<AirHockeyBookingDTO> getAirHockeyBookingsWeekAhead(@PathVariable String startDate) {
+        return airHockeyBookingService.getAirHockeyBookingsWeekAhead(startDate);
+    }
+
     @GetMapping("/airhockey/{id}")
     public ResponseEntity<AirHockeyBookingDTO> getAirHockeyBooking(@PathVariable Long id) {
         return ResponseEntity.of(airHockeyBookingService.getAirHockeyBooking(id));

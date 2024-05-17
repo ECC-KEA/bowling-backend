@@ -31,6 +31,16 @@ public class BowlingBookingController {
         return bowlingBookingService.getBowlingBookings();
     }
 
+    @GetMapping("/bowling/week")
+    public List<BowlingBookingDTO> getBowlingBookingsWeekAhead() {
+        return bowlingBookingService.getBowlingBookingsWeekAhead();
+    }
+
+    @GetMapping("/bowling/week/{startDate}")
+    public List<BowlingBookingDTO> getBowlingBookingsWeekAhead(@PathVariable String startDate) {
+        return bowlingBookingService.getBowlingBookingsWeekAhead(startDate);
+    }
+
     @GetMapping("/bowling/{id}")
     public ResponseEntity<BowlingBookingDTO> getBowlingBooking(@PathVariable Long id) {
         return ResponseEntity.of(bowlingBookingService.getBowlingBooking(id));

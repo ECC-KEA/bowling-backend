@@ -2,6 +2,7 @@ package dk.ecc.bowlinghall.booking.bowling;
 
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,5 +61,17 @@ public class BowlingBookingService {
     public List<BowlingBookingDTO> getBowlingBookingsByCustomerEmail(String customerEmail) {
         List<BowlingBooking> bookings = bowlingBookingRepository.findByCustomerEmail(customerEmail);
         return bookings.stream().map(this::toDTO).toList();
+    }
+
+    public List<BowlingBookingDTO> getBowlingBookingsWeekAhead() {
+        LocalDateTime now = LocalDateTime.now();
+        List<BowlingBooking> bookings = bowlingBookingRepository.findByStartAfter(now);
+        return bookings.stream().filter(booking -> booking.getStart().isBefore(now.plusWeeks(1))).map(this::toDTO).toList();
+    }
+
+    public List<BowlingBookingDTO> getBowlingBookingsWeekAhead(String startDate) {
+        LocalDateTime parsedStartDate = LocalDateTime.parse(startDate);
+        List<BowlingBooking> bookings = bowlingBookingRepository.findByStartAfter(parsedStartDate);
+        return bookings.stream().filter(booking -> booking.getStart().isBefore(parsedStartDate.plusWeeks(1))).map(this::toDTO).toList();
     }
 }
