@@ -1,7 +1,9 @@
 package dk.ecc.bowlinghall.booking.bowling;
 
+import dk.ecc.bowlinghall.error.NotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,14 +30,20 @@ public class BowlingBookingService {
     }
 
     private BowlingBookingDTO toDTO(BowlingBooking booking) {
+        boolean isChildFriendly = false;
+        Long laneId = null;
+        if(booking.getLane() != null) {
+            isChildFriendly = booking.getLane().isChildFriendly();
+            laneId = booking.getLane().getId();
+        }
         return new BowlingBookingDTO(
                 booking.getId(),
-                booking.getLane().getId(),
+                laneId,
                 booking.getCustomerEmail(),
                 booking.getStart(),
                 booking.getEnd(),
                 booking.getStatus(),
-                booking.getLane().isChildFriendly()
+                isChildFriendly
         );
     }
 
@@ -53,8 +61,13 @@ public class BowlingBookingService {
         return bookings.stream().map(this::toDTO).toList();
     }
 
-    public Optional<BowlingBookingDTO> getBowlingBooking(Long id) {
-        return bowlingBookingRepository.findById(id).map(this::toDTO);
+    public List<BowlingBookingDTO> getBowlingBookings(LocalDate fromDate, int limit) {
+        List<BowlingBooking> bookings = bowlingBookingRepository.findAllByStartBetween(fromDate.atStartOfDay(), fromDate.plusDays(limit).atStartOfDay());
+        return bookings.stream().map(this::toDTO).toList();
+    }
+
+    public BowlingBookingDTO getBowlingBooking(Long id) {
+        return bowlingBookingRepository.findById(id).map(this::toDTO).orElseThrow(() -> new NotFoundException("Booking not found"));
     }
 
     public List<BowlingBookingDTO> getBowlingBookingsByCustomerEmail(String customerEmail) {

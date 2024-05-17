@@ -19,6 +19,9 @@ class BowlingBookingControllerTest {
     @Autowired
     private WebTestClient webClient;
 
+    @Autowired
+    private BowlingBookingRepository bowlingBookingRepository;
+
     private final BowlingBookingDTO bowlingBookingDTO = new BowlingBookingDTO(
             null,
             null,
