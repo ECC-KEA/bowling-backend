@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -18,16 +19,24 @@ public class BowlingBookingController {
 
     @PostMapping("/bowling")
     public ResponseEntity<BowlingBookingDTO> addBowlingBooking(@RequestBody BowlingBookingDTO bowlingBookingDTO) {
+        System.out.println("controller " + bowlingBookingDTO.start());
         BowlingBookingDTO responseDTO = bowlingBookingService.addBowlingBooking(bowlingBookingDTO);
         return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
     }
 
 
     @GetMapping("/bowling")
-    public List<BowlingBookingDTO> getBowlingBookings(@RequestParam(required = false) LocalDate fromDate, @RequestParam(required = false) Integer days) {
-        if(days == null) days = 7;
-        if(fromDate != null) return bowlingBookingService.getBowlingBookings(fromDate, days);
-        return bowlingBookingService.getBowlingBookings();
+    public List<BowlingBookingDTO> getBowlingBookings(
+            @RequestParam(required = false) Integer day,
+            @RequestParam(required = false) Integer month,
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) Integer limit
+    ) {
+        if(day == null) day = LocalDate.now().getDayOfMonth();
+        if(month == null) month = LocalDate.now().getMonthValue();
+        if(year == null) year = LocalDate.now().getYear();
+        if(limit == null) limit = 7;
+        return bowlingBookingService.getBowlingBookings(LocalDateTime.of(year, month, day, 0, 0), limit);
     }
 
     @GetMapping("/bowling/{id}")

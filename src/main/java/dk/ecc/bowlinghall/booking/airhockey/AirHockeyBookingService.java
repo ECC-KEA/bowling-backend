@@ -19,8 +19,8 @@ public class AirHockeyBookingService {
                 booking.getId(),
                 booking.getTable().getId(),
                 booking.getCustomerEmail(),
-                booking.getStart().toString(),
-                booking.getEnd().toString(),
+                booking.getStart(),
+                booking.getEnd(),
                 booking.getStatus());
     }
 

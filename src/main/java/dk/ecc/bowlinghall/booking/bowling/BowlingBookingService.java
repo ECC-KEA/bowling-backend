@@ -4,6 +4,7 @@ import dk.ecc.bowlinghall.error.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,12 +21,13 @@ public class BowlingBookingService {
 
     public BowlingBookingDTO addBowlingBooking(BowlingBookingDTO bowlingBookingDTO) {
         var booking = toEntity(bowlingBookingDTO);
+        System.out.println("service " + booking.getStart());
         var savedBooking = bowlingBookingRepository.save(booking);
 
         var lane = savedBooking.getLane();
         lane.addBooking(savedBooking);
         bowlingLaneService.saveBowlingLane(lane);
-
+        System.out.println("saved booking " + savedBooking.getStart());
         return toDTO(savedBooking);
     }
 
@@ -61,8 +63,8 @@ public class BowlingBookingService {
         return bookings.stream().map(this::toDTO).toList();
     }
 
-    public List<BowlingBookingDTO> getBowlingBookings(LocalDate fromDate, int limit) {
-        List<BowlingBooking> bookings = bowlingBookingRepository.findAllByStartBetween(fromDate.atStartOfDay(), fromDate.plusDays(limit).atStartOfDay());
+    public List<BowlingBookingDTO> getBowlingBookings(LocalDateTime fromDate, int limit) {
+        List<BowlingBooking> bookings = bowlingBookingRepository.findAllByStartBetween(fromDate, fromDate.plusDays(limit));
         return bookings.stream().map(this::toDTO).toList();
     }
 

@@ -56,7 +56,7 @@ class BowlingBookingServiceTest {
 
     @Test
     void getBowlingBookingsPagination() {
-        var bookings = bowlingBookingService.getBowlingBookings(LocalDate.of(2025, 1, 1), 7);
+        var bookings = bowlingBookingService.getBowlingBookings(LocalDateTime.of(2025, 1, 1, 12, 0), 7);
 
         assertEquals(2, bookings.size());
         assertFalse(bookings.stream().anyMatch(booking -> booking.customerEmail().equals("DONT SHOW ME")));
