@@ -3,6 +3,8 @@ package dk.ecc.bowlinghall.booking.dinner;
 import dk.ecc.bowlinghall.error.ValidationException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class RestaurantService {
 
@@ -41,5 +43,18 @@ public class RestaurantService {
         }
         restaurant.addBooking(dinnerBooking);
         save(restaurant);
+    }
+
+    public RestaurantDTO toDTO(Restaurant restaurant) {
+        return new RestaurantDTO(
+                restaurant.getId(),
+                restaurant.getCapacity()
+        );
+    }
+
+    public List<RestaurantDTO> getRestaurants() {
+        List<Restaurant> restaurants = restaurantRepository.findAll();
+        return restaurants.stream().map(this::toDTO).toList();
+
     }
 }

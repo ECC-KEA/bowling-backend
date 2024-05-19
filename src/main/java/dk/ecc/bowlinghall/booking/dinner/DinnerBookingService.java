@@ -19,12 +19,10 @@ public class DinnerBookingService {
 
     public DinnerBooking fromDTO(DinnerBookingDTO dinnerBookingDTO) {
         return new DinnerBooking(
-                dinnerBookingDTO.id(),
                 dinnerBookingDTO.numberOfGuests(),
                 dinnerBookingDTO.customerEmail(),
                 dinnerBookingDTO.start(),
-                dinnerBookingDTO.end(),
-                dinnerBookingDTO.status()
+                dinnerBookingDTO.end()
         );
     }
 
@@ -124,5 +122,12 @@ public class DinnerBookingService {
     public List<DinnerBookingDTO> getDinnerBookingsByEmail(String customerEmail) {
         List<DinnerBooking> bookings = dinnerBookingRepository.findByCustomerEmail(customerEmail);
         return bookings.stream().map(this::toDTO).toList();
+    }
+
+    public DinnerBookingDTO addDinnerBooking(DinnerBookingDTO dinnerBookingDTO) {
+        var booking = fromDTO(dinnerBookingDTO);
+        var savedBooking = dinnerBookingRepository.save(booking);
+        addToRestaurant(savedBooking);
+        return toDTO(savedBooking);
     }
 }
