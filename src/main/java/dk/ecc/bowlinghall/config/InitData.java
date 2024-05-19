@@ -57,29 +57,50 @@ public class InitData implements CommandLineRunner {
         var today = LocalDateTime.now();
         var nextWeek = LocalDateTime.now().plusWeeks(1);
 
-        var booking1 = new BowlingBooking("email@test.t", today.withHour(10), today.withHour(11), bowlingLaneRepository.findById(1L).get());
-        var booking2 = new BowlingBooking("email@test.t", today.withHour(11), today.withHour(12), bowlingLaneRepository.findById(2L).get());
-        var booking3 = new BowlingBooking("email@test.t", today.withHour(12), today.withHour(13), bowlingLaneRepository.findById(3L).get());
-        var booking4 = new BowlingBooking("email@test.t", today.withHour(13), today.withHour(14), bowlingLaneRepository.findById(4L).get());
-        var booking5 = new BowlingBooking("email@test.t", today.withHour(14), today.withHour(15), bowlingLaneRepository.findById(5L).get());
-        var booking6 = new BowlingBooking("email@test.t", today.withHour(15), today.withHour(16), bowlingLaneRepository.findById(6L).get());
-        var booking7 = new BowlingBooking("email@test.t", today.withHour(16), today.withHour(17), bowlingLaneRepository.findById(7L).get());
-        var booking8 = new BowlingBooking("email@test.t", today.withHour(17), today.withHour(18), bowlingLaneRepository.findById(8L).get());
+        var booking1 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", today.withHour(10), today.withHour(11), null));
+        var booking2 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", today.withHour(11), today.withHour(12), null));
+        var booking3 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", today.withHour(12), today.withHour(13), null));
+        var booking4 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", today.withHour(13), today.withHour(14), null));
+        var booking5 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", today.withHour(14), today.withHour(15), null));
+        var booking6 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", today.withHour(15), today.withHour(16), null));
+        var booking7 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", today.withHour(16), today.withHour(17), null));
+        var booking8 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", today.withHour(17), today.withHour(18), null));
 
-        var booking9 = new BowlingBooking("email@test.t", nextWeek.withHour(12), nextWeek.withHour(13), bowlingLaneRepository.findById(2L).get());
-        var booking10 = new BowlingBooking("email@test.t", nextWeek.plusDays(1).withHour(13), nextWeek.plusDays(1).withHour(14), bowlingLaneRepository.findById(3L).get());
-        var booking11 = new BowlingBooking("email@test.t", nextWeek.plusDays(2).withHour(14), nextWeek.plusDays(2).withHour(15), bowlingLaneRepository.findById(4L).get());
-        var booking12 = new BowlingBooking("email@test.t", nextWeek.plusDays(3).withHour(15), nextWeek.plusDays(3).withHour(16), bowlingLaneRepository.findById(5L).get());
-        var booking13 = new BowlingBooking("email@test.t", nextWeek.plusDays(4).withHour(16), nextWeek.plusDays(4).withHour(17), bowlingLaneRepository.findById(6L).get());
-        var booking14 = new BowlingBooking("email@test.t", nextWeek.plusDays(5).withHour(17), nextWeek.plusDays(5).withHour(18), bowlingLaneRepository.findById(7L).get());
-        var booking15 = new BowlingBooking("email@test.t", nextWeek.plusDays(6).withHour(18), nextWeek.plusDays(6).withHour(19), bowlingLaneRepository.findById(8L).get());
-        var booking16 = new BowlingBooking("email@test.t", nextWeek.plusDays(7).withHour(13), nextWeek.plusDays(7).withHour(14), bowlingLaneRepository.findById(3L).get());
-        var booking17 = new BowlingBooking("email@test.t", nextWeek.plusDays(8).withHour(14), nextWeek.plusDays(8).withHour(15), bowlingLaneRepository.findById(4L).get());
-        var booking18 = new BowlingBooking("email@test.t", nextWeek.plusDays(9).withHour(15), nextWeek.plusDays(9).withHour(16), bowlingLaneRepository.findById(5L).get());
-        var booking19 = new BowlingBooking("email@test.t", nextWeek.plusDays(10).withHour(16), nextWeek.plusDays(10).withHour(17), bowlingLaneRepository.findById(6L).get());
-        var booking20 = new BowlingBooking("email@test.t", nextWeek.plusDays(11).withHour(17), nextWeek.plusDays(11).withHour(18), bowlingLaneRepository.findById(7L).get());
-        var booking21 = new BowlingBooking("email@test.t", nextWeek.plusDays(12).withHour(18), nextWeek.plusDays(12).withHour(19), bowlingLaneRepository.findById(8L).get());
+        var booking9 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", nextWeek.withHour(12), nextWeek.withHour(13), null));
+        var booking10 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", nextWeek.plusDays(1).withHour(13), nextWeek.plusDays(1).withHour(14), null));
+        var booking11 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", nextWeek.plusDays(2).withHour(14), nextWeek.plusDays(2).withHour(15), null));
+        var booking12 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", nextWeek.plusDays(3).withHour(15), nextWeek.plusDays(3).withHour(16), null));
+        var booking13 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", nextWeek.plusDays(4).withHour(16), nextWeek.plusDays(4).withHour(17), null));
+        var booking14 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", nextWeek.plusDays(5).withHour(17), nextWeek.plusDays(5).withHour(18), null));
+        var booking15 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", nextWeek.plusDays(6).withHour(18), nextWeek.plusDays(6).withHour(19), null));
+        var booking16 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", nextWeek.plusDays(7).withHour(13), nextWeek.plusDays(7).withHour(14), null));
+        var booking17 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", nextWeek.plusDays(8).withHour(14), nextWeek.plusDays(8).withHour(15), null));
+        var booking18 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", nextWeek.plusDays(9).withHour(15), nextWeek.plusDays(9).withHour(16), null));
+        var booking19 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", nextWeek.plusDays(10).withHour(16), nextWeek.plusDays(10).withHour(17), null));
+        var booking20 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", nextWeek.plusDays(11).withHour(17), nextWeek.plusDays(11).withHour(18), null));
+        var booking21 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", nextWeek.plusDays(12).withHour(18), nextWeek.plusDays(12).withHour(19), null));
 
+        booking1.setLane(bowlingLaneRepository.findById(1L).get());
+        booking2.setLane(bowlingLaneRepository.findById(2L).get());
+        booking3.setLane(bowlingLaneRepository.findById(3L).get());
+        booking4.setLane(bowlingLaneRepository.findById(4L).get());
+        booking5.setLane(bowlingLaneRepository.findById(5L).get());
+        booking6.setLane(bowlingLaneRepository.findById(6L).get());
+        booking7.setLane(bowlingLaneRepository.findById(7L).get());
+        booking8.setLane(bowlingLaneRepository.findById(8L).get());
+        booking9.setLane(bowlingLaneRepository.findById(9L).get());
+        booking10.setLane(bowlingLaneRepository.findById(10L).get());
+        booking11.setLane(bowlingLaneRepository.findById(11L).get());
+        booking12.setLane(bowlingLaneRepository.findById(12L).get());
+        booking13.setLane(bowlingLaneRepository.findById(13L).get());
+        booking14.setLane(bowlingLaneRepository.findById(14L).get());
+        booking15.setLane(bowlingLaneRepository.findById(15L).get());
+        booking16.setLane(bowlingLaneRepository.findById(16L).get());
+        booking17.setLane(bowlingLaneRepository.findById(17L).get());
+        booking18.setLane(bowlingLaneRepository.findById(18L).get());
+        booking19.setLane(bowlingLaneRepository.findById(19L).get());
+        booking20.setLane(bowlingLaneRepository.findById(20L).get());
+        booking21.setLane(bowlingLaneRepository.findById(21L).get());
 
         bowlingBookingRepository.saveAll(
                 Set.of(
@@ -112,28 +133,50 @@ public class InitData implements CommandLineRunner {
         var today = LocalDateTime.now();
         var nextWeek = LocalDateTime.now().plusWeeks(1);
 
-        var booking1 = new AirHockeyBooking("email@test.t", today.withHour(10), today.withHour(11), airHockeyTableRepository.findById(1L).get());
-        var booking2 = new AirHockeyBooking("email@test.t", today.withHour(11), today.withHour(12), airHockeyTableRepository.findById(2L).get());
-        var booking3 = new AirHockeyBooking("email@test.t", today.withHour(12), today.withHour(13), airHockeyTableRepository.findById(3L).get());
-        var booking4 = new AirHockeyBooking("email@test.t", today.withHour(13), today.withHour(14), airHockeyTableRepository.findById(4L).get());
-        var booking5 = new AirHockeyBooking("email@test.t", today.withHour(14), today.withHour(15), airHockeyTableRepository.findById(5L).get());
-        var booking6 = new AirHockeyBooking("email@test.t", today.withHour(15), today.withHour(16), airHockeyTableRepository.findById(6L).get());
-        var booking7 = new AirHockeyBooking("email@test.t", today.withHour(16), today.withHour(17), airHockeyTableRepository.findById(1L).get());
-        var booking8 = new AirHockeyBooking("email@test.t", today.withHour(17), today.withHour(18), airHockeyTableRepository.findById(2L).get());
+        var booking1 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", today.withHour(10), today.withHour(11), null));
+        var booking2 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", today.withHour(11), today.withHour(12), null));
+        var booking3 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", today.withHour(12), today.withHour(13), null));
+        var booking4 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", today.withHour(13), today.withHour(14), null));
+        var booking5 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", today.withHour(14), today.withHour(15), null));
+        var booking6 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", today.withHour(15), today.withHour(16), null));
+        var booking7 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", today.withHour(16), today.withHour(17), null));
+        var booking8 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", today.withHour(17), today.withHour(18), null));
 
-        var booking9 = new AirHockeyBooking("email@test.t", nextWeek.withHour(12), nextWeek.withHour(13), airHockeyTableRepository.findById(3L).get());
-        var booking10 = new AirHockeyBooking("email@test.t", nextWeek.plusDays(1).withHour(13), nextWeek.plusDays(1).withHour(14), airHockeyTableRepository.findById(4L).get());
-        var booking11 = new AirHockeyBooking("email@test.t", nextWeek.plusDays(2).withHour(14), nextWeek.plusDays(2).withHour(15), airHockeyTableRepository.findById(5L).get());
-        var booking12 = new AirHockeyBooking("email@test.t", nextWeek.plusDays(3).withHour(15), nextWeek.plusDays(3).withHour(16), airHockeyTableRepository.findById(6L).get());
-        var booking13 = new AirHockeyBooking("email@test.t", nextWeek.plusDays(4).withHour(16), nextWeek.plusDays(4).withHour(17), airHockeyTableRepository.findById(1L).get());
-        var booking14 = new AirHockeyBooking("email@test.t", nextWeek.plusDays(5).withHour(17), nextWeek.plusDays(5).withHour(18), airHockeyTableRepository.findById(2L).get());
-        var booking15 = new AirHockeyBooking("email@test.t", nextWeek.plusDays(6).withHour(18), nextWeek.plusDays(6).withHour(19), airHockeyTableRepository.findById(3L).get());
-        var booking16 = new AirHockeyBooking("email@test.t", nextWeek.plusDays(7).withHour(13), nextWeek.plusDays(7).withHour(14), airHockeyTableRepository.findById(4L).get());
-        var booking17 = new AirHockeyBooking("email@test.t", nextWeek.plusDays(8).withHour(14), nextWeek.plusDays(8).withHour(15), airHockeyTableRepository.findById(5L).get());
-        var booking18 = new AirHockeyBooking("email@test.t", nextWeek.plusDays(9).withHour(15), nextWeek.plusDays(9).withHour(16), airHockeyTableRepository.findById(6L).get());
-        var booking19 = new AirHockeyBooking("email@test.t", nextWeek.plusDays(10).withHour(16), nextWeek.plusDays(10).withHour(17), airHockeyTableRepository.findById(1L).get());
-        var booking20 = new AirHockeyBooking("email@test.t", nextWeek.plusDays(11).withHour(17), nextWeek.plusDays(11).withHour(18), airHockeyTableRepository.findById(2L).get());
-        var booking21 = new AirHockeyBooking("email@test.t", nextWeek.plusDays(12).withHour(18), nextWeek.plusDays(12).withHour(19), airHockeyTableRepository.findById(3L).get());
+        var booking9 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", nextWeek.withHour(12), nextWeek.withHour(13), null));
+        var booking10 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", nextWeek.plusDays(1).withHour(13), nextWeek.plusDays(1).withHour(14), null));
+        var booking11 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", nextWeek.plusDays(2).withHour(14), nextWeek.plusDays(2).withHour(15), null));
+        var booking12 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", nextWeek.plusDays(3).withHour(15), nextWeek.plusDays(3).withHour(16), null));
+        var booking13 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", nextWeek.plusDays(4).withHour(16), nextWeek.plusDays(4).withHour(17), null));
+        var booking14 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", nextWeek.plusDays(5).withHour(17), nextWeek.plusDays(5).withHour(18), null));
+        var booking15 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", nextWeek.plusDays(6).withHour(18), nextWeek.plusDays(6).withHour(19), null));
+        var booking16 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", nextWeek.plusDays(7).withHour(13), nextWeek.plusDays(7).withHour(14), null));
+        var booking17 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", nextWeek.plusDays(8).withHour(14), nextWeek.plusDays(8).withHour(15), null));
+        var booking18 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", nextWeek.plusDays(9).withHour(15), nextWeek.plusDays(9).withHour(16), null));
+        var booking19 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", nextWeek.plusDays(10).withHour(16), nextWeek.plusDays(10).withHour(17), null));
+        var booking20 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", nextWeek.plusDays(11).withHour(17), nextWeek.plusDays(11).withHour(18), null));
+        var booking21 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", nextWeek.plusDays(12).withHour(18), nextWeek.plusDays(12).withHour(19), null));
+
+        booking1.setTable(airHockeyTableRepository.findById(1L).get());
+        booking2.setTable(airHockeyTableRepository.findById(2L).get());
+        booking3.setTable(airHockeyTableRepository.findById(3L).get());
+        booking4.setTable(airHockeyTableRepository.findById(4L).get());
+        booking5.setTable(airHockeyTableRepository.findById(5L).get());
+        booking6.setTable(airHockeyTableRepository.findById(1L).get());
+        booking7.setTable(airHockeyTableRepository.findById(2L).get());
+        booking8.setTable(airHockeyTableRepository.findById(3L).get());
+        booking9.setTable(airHockeyTableRepository.findById(4L).get());
+        booking10.setTable(airHockeyTableRepository.findById(5L).get());
+        booking11.setTable(airHockeyTableRepository.findById(1L).get());
+        booking12.setTable(airHockeyTableRepository.findById(2L).get());
+        booking13.setTable(airHockeyTableRepository.findById(3L).get());
+        booking14.setTable(airHockeyTableRepository.findById(4L).get());
+        booking15.setTable(airHockeyTableRepository.findById(5L).get());
+        booking16.setTable(airHockeyTableRepository.findById(1L).get());
+        booking17.setTable(airHockeyTableRepository.findById(2L).get());
+        booking18.setTable(airHockeyTableRepository.findById(3L).get());
+        booking19.setTable(airHockeyTableRepository.findById(4L).get());
+        booking20.setTable(airHockeyTableRepository.findById(5L).get());
+        booking21.setTable(airHockeyTableRepository.findById(1L).get());
 
         airHockeyBookingRepository.saveAll(
                 Set.of(
