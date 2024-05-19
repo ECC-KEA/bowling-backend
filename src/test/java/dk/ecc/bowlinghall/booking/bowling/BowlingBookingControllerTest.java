@@ -28,6 +28,8 @@ class BowlingBookingControllerTest {
             null,
             false);
 
+    private Long id;
+
     @BeforeEach
     void setUp(@Autowired BowlingBookingRepository bowlingBookingRepository, @Autowired BowlingLaneRepository bowlingLaneRepository) {
         var lane1 = new BowlingLane(200, true);
@@ -59,9 +61,11 @@ class BowlingBookingControllerTest {
                 null
         );
 
-        bowlingBookingRepository.save(booking1);
+        var savedBooking = bowlingBookingRepository.save(booking1);
         bowlingBookingRepository.save(booking2);
         bowlingBookingRepository.save(booking3);
+
+        id = savedBooking.getId();
     }
 
     @AfterEach
@@ -107,7 +111,6 @@ class BowlingBookingControllerTest {
 
     @Test
     void updateBowlingBookingPartially() {
-        var id = 1L;
         var body = new BowlingBookingDTO(
                 null, null, null, null, null, Status.CANCELLED, null
         );
