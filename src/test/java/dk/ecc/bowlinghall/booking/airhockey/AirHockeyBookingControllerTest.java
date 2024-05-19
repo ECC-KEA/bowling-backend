@@ -20,6 +20,8 @@ class AirHockeyBookingControllerTest {
     @Autowired
     private WebTestClient webClient;
 
+    private Long id;
+
     @BeforeEach
     void setUp(@Autowired AirHockeyBookingRepository airHockeyBookingRepository) {
         var booking1 = new AirHockeyBooking(
@@ -35,15 +37,17 @@ class AirHockeyBookingControllerTest {
                 null
         );
         var booking3 = new AirHockeyBooking(
-                "SHOW ME",
+                "TEST@EMAIL",
                 LocalDateTime.now().plusDays(1).withHour(14),
                 LocalDateTime.now().plusDays(1).withHour(15),
                 null
         );
 
-        airHockeyBookingRepository.save(booking1);
+        var savedBooking = airHockeyBookingRepository.save(booking1);
         airHockeyBookingRepository.save(booking2);
         airHockeyBookingRepository.save(booking3);
+
+        id = savedBooking.getId();
     }
 
     @AfterEach
@@ -72,7 +76,6 @@ class AirHockeyBookingControllerTest {
 
     @Test
     void getAirHockeyBooking() {
-        var id = 18L;
         webClient
                 .get().uri("/airhockey/{id}", id)
                 .exchange()
@@ -86,7 +89,7 @@ class AirHockeyBookingControllerTest {
 
     @Test
     void getAirHockeyBookingsByCustomerEmail() {
-        var customerEmail = "email@test.t";
+        var customerEmail = "TEST@EMAIL";
         webClient
                 .get().uri("/airhockey/email/{customerEmail}", customerEmail)
                 .exchange()
@@ -99,10 +102,8 @@ class AirHockeyBookingControllerTest {
                 });
     }
 
-    //TODO figure out why test fails, when it succeed via Postman. - The test is identical to the one in BowlingBookingControllerTest which works.
     @Test
     void updatePartialAirHockeyBooking() {
-        var id = 1L;
         var body = new AirHockeyBookingDTO(
                 null, null, null, null, null, Status.CANCELLED
         );
