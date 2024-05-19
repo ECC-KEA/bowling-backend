@@ -3,7 +3,6 @@ package dk.ecc.bowlinghall.booking.airhockey;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -30,8 +29,8 @@ class AirHockeyBookingServiceIntegrationTest {
         );
         var booking2 = new AirHockeyBooking(
                 "DONT SHOW ME",
-                LocalDateTime.now().plusWeeks(1).withHour(14),
-                LocalDateTime.now().plusWeeks(1).withHour(15),
+                LocalDateTime.now().plusDays(1).plusWeeks(1).withHour(14),
+                LocalDateTime.now().plusDays(1).plusWeeks(1).withHour(15),
                 null
         );
         var booking3 = new AirHockeyBooking(
@@ -52,10 +51,10 @@ class AirHockeyBookingServiceIntegrationTest {
     }
 
     @Test
-    void getBowlingBookingsPagination() {
+    void getAirHockeyBookingsPagination() {
         var bookings = airHockeyBookingService.getAirHockeyBookings(LocalDateTime.now(), 7);
 
-        assertEquals(3, bookings.size());
+        assertEquals(2, bookings.size());
         assertFalse(bookings.stream().anyMatch(booking -> booking.customerEmail().equals("DONT SHOW ME")));
     }
 
