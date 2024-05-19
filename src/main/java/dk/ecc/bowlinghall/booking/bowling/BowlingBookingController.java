@@ -47,4 +47,10 @@ public class BowlingBookingController {
     public ResponseEntity<List<BowlingBookingDTO>> getBowlingBookingsByCustomerEmail(@PathVariable String customerEmail) {
         return ResponseEntity.ok(bowlingBookingService.getBowlingBookingsByCustomerEmail(customerEmail));
     }
+
+    @PatchMapping("/bowling/{id}")
+    public ResponseEntity<BowlingBookingDTO> updatePartialBowlingBooking(@PathVariable Long id, @RequestBody BowlingBookingDTO dto) {
+        BowlingBookingDTO responseDTO = bowlingBookingService.updatePartialBowlingBooking(id, dto);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
 }

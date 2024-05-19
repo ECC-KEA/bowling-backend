@@ -1,5 +1,7 @@
 package dk.ecc.bowlinghall.booking.bowling;
 
+import dk.ecc.bowlinghall.booking.Status;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,6 +27,8 @@ class BowlingBookingControllerTest {
             LocalDateTime.now().plusDays(2).withHour(13),
             null,
             false);
+
+    private Long id;
 
     @BeforeEach
     void setUp(@Autowired BowlingBookingRepository bowlingBookingRepository, @Autowired BowlingLaneRepository bowlingLaneRepository) {
@@ -57,9 +61,11 @@ class BowlingBookingControllerTest {
                 null
         );
 
-        bowlingBookingRepository.save(booking1);
+        var savedBooking = bowlingBookingRepository.save(booking1);
         bowlingBookingRepository.save(booking2);
         bowlingBookingRepository.save(booking3);
+
+        id = savedBooking.getId();
     }
 
     @AfterEach
@@ -100,6 +106,23 @@ class BowlingBookingControllerTest {
                     assertEquals(bowlingBookingDTO.customerEmail(), response.customerEmail());
                     assertEquals(bowlingBookingDTO.start(), response.start());
                     assertEquals(bowlingBookingDTO.end(), response.end());
+                });
+    }
+
+    @Test
+    void updateBowlingBookingPartially() {
+        var body = new BowlingBookingDTO(
+                null, null, null, null, null, Status.CANCELLED, null
+        );
+        webClient.patch().uri("/bowling/{id}", id)
+                .bodyValue(body)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(BowlingBookingDTO.class)
+                .value(response -> {
+                    assertNotNull(response);
+                    assertEquals(id, response.id());
+                    assertEquals(Status.CANCELLED, response.status());
                 });
     }
 }

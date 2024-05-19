@@ -2,6 +2,7 @@ package dk.ecc.bowlinghall.booking.airhockey;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import dk.ecc.bowlinghall.booking.Status;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +20,8 @@ class AirHockeyBookingControllerTest {
     @Autowired
     private WebTestClient webClient;
 
+    private Long id;
+
     @BeforeEach
     void setUp(@Autowired AirHockeyBookingRepository airHockeyBookingRepository) {
         var booking1 = new AirHockeyBooking(
@@ -34,15 +37,17 @@ class AirHockeyBookingControllerTest {
                 null
         );
         var booking3 = new AirHockeyBooking(
-                "SHOW ME",
+                "TEST@EMAIL",
                 LocalDateTime.now().plusDays(1).withHour(14),
                 LocalDateTime.now().plusDays(1).withHour(15),
                 null
         );
 
-        airHockeyBookingRepository.save(booking1);
+        var savedBooking = airHockeyBookingRepository.save(booking1);
         airHockeyBookingRepository.save(booking2);
         airHockeyBookingRepository.save(booking3);
+
+        id = savedBooking.getId();
     }
 
     @AfterEach
@@ -69,4 +74,49 @@ class AirHockeyBookingControllerTest {
                 });
     }
 
+    @Test
+    void getAirHockeyBooking() {
+        webClient
+                .get().uri("/airhockey/{id}", id)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(AirHockeyBookingDTO.class)
+                .value(response -> {
+                    assertNotNull(response);
+                    assertEquals(id, response.id());
+                });
+    }
+
+    @Test
+    void getAirHockeyBookingsByCustomerEmail() {
+        var customerEmail = "TEST@EMAIL";
+        webClient
+                .get().uri("/airhockey/email/{customerEmail}", customerEmail)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(AirHockeyBookingDTO.class)
+                .value(response -> {
+                    assertNotNull(response);
+                    assertFalse(response.isEmpty());
+                    assertTrue(response.stream().allMatch(booking -> booking.customerEmail().equals(customerEmail)));
+                });
+    }
+
+    @Test
+    void updatePartialAirHockeyBooking() {
+        var body = new AirHockeyBookingDTO(
+                null, null, null, null, null, Status.CANCELLED
+        );
+        webClient
+                .patch().uri("/airhockey/{id}", id)
+                .bodyValue(body)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(AirHockeyBookingDTO.class)
+                .value(response -> {
+                    assertNotNull(response);
+                    assertEquals(id, response.id());
+                    assertEquals(Status.CANCELLED, response.status());
+                });
+    }
 }

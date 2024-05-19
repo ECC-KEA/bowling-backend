@@ -1,5 +1,6 @@
 package dk.ecc.bowlinghall.booking.bowling;
 
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -30,7 +31,6 @@ public class BowlingLaneService {
         return bowlingLaneRepository.findAll();
     }
 
-    //TODO: Find out if this is needed
     public BowlingLane getBowlingLaneById(Long id) {
         return bowlingLaneRepository.findById(id).orElseThrow();
     }
@@ -39,11 +39,16 @@ public class BowlingLaneService {
         return bowlingLaneRepository.save(bowlingLane);
     }
 
+    @Transactional
     public BowlingLane findFirstAvailableBowlingLane(LocalDateTime start, LocalDateTime end, boolean childFriendly) {
         var lanes = getBowlingLanes();
         return lanes.stream()
                 .filter(lane -> lane.isAvailable(start, end) && lane.isChildFriendly() == childFriendly)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("No lanes available"));
+    }
+
+    public boolean isAvailable(LocalDateTime start, LocalDateTime end) {
+        return getBowlingLanes().stream().anyMatch(lane -> lane.isAvailable(start, end));
     }
 }
