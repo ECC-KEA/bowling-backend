@@ -19,14 +19,13 @@ public class BowlingBookingController {
 
     @PostMapping("/bowling")
     public ResponseEntity<BowlingBookingDTO> addBowlingBooking(@RequestBody BowlingBookingDTO bowlingBookingDTO) {
-        System.out.println("controller " + bowlingBookingDTO.start());
-        BowlingBookingDTO responseDTO = bowlingBookingService.addBowlingBooking(bowlingBookingDTO);
-        return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
+        var responseDTO = bowlingBookingService.addBowlingBooking(bowlingBookingDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
 
     @GetMapping("/bowling")
-    public List<BowlingBookingDTO> getBowlingBookings(
+    public ResponseEntity<List<BowlingBookingDTO>> getBowlingBookings(
             @RequestParam(required = false) Integer day,
             @RequestParam(required = false) Integer month,
             @RequestParam(required = false) Integer year,
@@ -36,7 +35,7 @@ public class BowlingBookingController {
         if(month == null) month = LocalDate.now().getMonthValue();
         if(year == null) year = LocalDate.now().getYear();
         if(limit == null) limit = 7;
-        return bowlingBookingService.getBowlingBookings(LocalDateTime.of(year, month, day, 0, 0), limit);
+        return ResponseEntity.ok(bowlingBookingService.getBowlingBookings(LocalDateTime.of(year, month, day, 0, 0), limit));
     }
 
     @GetMapping("/bowling/{id}")

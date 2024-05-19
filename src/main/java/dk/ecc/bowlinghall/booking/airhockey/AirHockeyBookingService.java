@@ -12,9 +12,11 @@ import java.util.Optional;
 public class AirHockeyBookingService {
 
     private final AirHockeyBookingRepository airHockeyBookingRepository;
+    private final AirHockeyTableService airHockeyTableService;
 
-    public AirHockeyBookingService(AirHockeyBookingRepository airHockeyBookingRepository) {
+    public AirHockeyBookingService(AirHockeyBookingRepository airHockeyBookingRepository, AirHockeyTableService airHockeyTableService) {
         this.airHockeyBookingRepository = airHockeyBookingRepository;
+        this.airHockeyTableService = airHockeyTableService;
     }
 
     private AirHockeyBookingDTO toDTO(AirHockeyBooking booking) {
@@ -29,6 +31,15 @@ public class AirHockeyBookingService {
                 booking.getStart(),
                 booking.getEnd(),
                 booking.getStatus());
+    }
+
+    private AirHockeyBooking toEntity(AirHockeyBookingDTO bookingDTO) {
+        return new AirHockeyBooking(
+                bookingDTO.customerEmail(),
+                bookingDTO.start(),
+                bookingDTO.end(),
+                airHockeyTableService.findFirstAvailableAirHockeyTable(bookingDTO.start(), bookingDTO.end())
+        );
     }
 
     public List<AirHockeyBookingDTO> getAirHockeyBookings() {
@@ -48,5 +59,14 @@ public class AirHockeyBookingService {
     public List<AirHockeyBookingDTO> getAirHockeyBookingsByCustomerEmail(String customerEmail) {
         List<AirHockeyBooking> bookings = airHockeyBookingRepository.findByCustomerEmail(customerEmail);
         return bookings.stream().map(this::toDTO).toList();
+    }
+
+    public AirHockeyBookingDTO addAirHockeyBooking(AirHockeyBookingDTO bookingDTO) {
+        var booking = toEntity(bookingDTO);
+        var savedBooking = airHockeyBookingRepository.save(booking);
+        var table = savedBooking.getTable();
+        table.addBooking(savedBooking);
+        airHockeyTableService.saveAirHockeyTable(table);
+        return toDTO(savedBooking);
     }
 }

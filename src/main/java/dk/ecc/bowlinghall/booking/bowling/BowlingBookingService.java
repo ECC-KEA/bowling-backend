@@ -19,13 +19,10 @@ public class BowlingBookingService {
 
     public BowlingBookingDTO addBowlingBooking(BowlingBookingDTO bowlingBookingDTO) {
         var booking = toEntity(bowlingBookingDTO);
-        System.out.println("service " + booking.getStart());
         var savedBooking = bowlingBookingRepository.save(booking);
-
         var lane = savedBooking.getLane();
         lane.addBooking(savedBooking);
         bowlingLaneService.saveBowlingLane(lane);
-        System.out.println("saved booking " + savedBooking.getStart());
         return toDTO(savedBooking);
     }
 
