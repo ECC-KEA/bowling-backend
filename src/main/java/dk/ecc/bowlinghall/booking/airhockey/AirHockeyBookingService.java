@@ -6,6 +6,7 @@ import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -33,8 +34,8 @@ public class AirHockeyBookingService {
         return toDTO(savedBooking);
     }
 
-    public List<AirHockeyBookingDTO> getAirHockeyBookings() {
-        List<AirHockeyBooking> bookings = airHockeyBookingRepository.findAll();
+    public List<AirHockeyBookingDTO> getAirHockeyBookings(LocalDateTime fromDate, int limit) {
+        List<AirHockeyBooking> bookings = airHockeyBookingRepository.findAllByStartBetween(fromDate, fromDate.plusDays(limit));
         return bookings.stream().map(this::toDTO).toList();
     }
 
@@ -100,9 +101,13 @@ public class AirHockeyBookingService {
     }
 
     private AirHockeyBookingDTO toDTO(AirHockeyBooking booking) {
+        Long tableId = null;
+        if(booking.getTable() != null) {
+            tableId = booking.getTable().getId();
+        }
         return new AirHockeyBookingDTO(
                 booking.getId(),
-                booking.getTable().getId(),
+                tableId,
                 booking.getCustomerEmail(),
                 booking.getStart(),
                 booking.getEnd(),
@@ -117,5 +122,4 @@ public class AirHockeyBookingService {
                 airHockeyTableService.findFirstAvailableAirHockeyTable(bookingDTO.start(), bookingDTO.end())
         );
     }
-
 }

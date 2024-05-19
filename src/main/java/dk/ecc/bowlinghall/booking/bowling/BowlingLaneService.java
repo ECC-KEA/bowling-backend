@@ -15,6 +15,18 @@ public class BowlingLaneService {
         this.bowlingLaneRepository = bowlingLaneRepository;
     }
 
+    public BowlingLaneDTO toDTO(BowlingLane lane) {
+        return new BowlingLaneDTO(lane.getId(), lane.getPricePerHour(), lane.isChildFriendly());
+    }
+
+    public List<BowlingLaneDTO> getBowlingLaneDTOs() {
+        return bowlingLaneRepository
+                .findAll()
+                .stream()
+                .map(this::toDTO)
+                .toList();
+    }
+
     public List<BowlingLane> getBowlingLanes() {
         return bowlingLaneRepository.findAll();
     }

@@ -1,5 +1,6 @@
 package dk.ecc.bowlinghall.booking.airhockey;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import dk.ecc.bowlinghall.booking.Status;
 
 import java.time.LocalDateTime;

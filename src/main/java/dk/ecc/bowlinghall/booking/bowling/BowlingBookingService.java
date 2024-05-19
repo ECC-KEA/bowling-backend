@@ -2,11 +2,13 @@ package dk.ecc.bowlinghall.booking.bowling;
 
 
 import dk.ecc.bowlinghall.booking.Status;
+import dk.ecc.bowlinghall.error.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -26,26 +28,10 @@ public class BowlingBookingService {
     public BowlingBookingDTO addBowlingBooking(BowlingBookingDTO bowlingBookingDTO) {
         var booking = toEntity(bowlingBookingDTO);
         var savedBooking = bowlingBookingRepository.save(booking);
-
         var lane = savedBooking.getLane();
         lane.addBooking(savedBooking);
         bowlingLaneService.saveBowlingLane(lane);
-
         return toDTO(savedBooking);
-    }
-
-    public List<BowlingBookingDTO> getBowlingBookings() {
-        List<BowlingBooking> bookings = bowlingBookingRepository.findAll();
-        return bookings.stream().map(this::toDTO).toList();
-    }
-
-    public Optional<BowlingBookingDTO> getBowlingBooking(Long id) {
-        return bowlingBookingRepository.findById(id).map(this::toDTO);
-    }
-
-    public List<BowlingBookingDTO> getBowlingBookingsByCustomerEmail(String customerEmail) {
-        List<BowlingBooking> bookings = bowlingBookingRepository.findByCustomerEmail(customerEmail);
-        return bookings.stream().map(this::toDTO).toList();
     }
 
     /**
@@ -117,18 +103,23 @@ public class BowlingBookingService {
         if (dto.status() != null) map.put("status", dto.status());
         if (dto.childFriendly() != null) map.put("childFriendly", dto.childFriendly());
         return map;
-
     }
 
     private BowlingBookingDTO toDTO(BowlingBooking booking) {
+        boolean isChildFriendly = false;
+        Long laneId = null;
+        if(booking.getLane() != null) {
+            isChildFriendly = booking.getLane().isChildFriendly();
+            laneId = booking.getLane().getId();
+        }
         return new BowlingBookingDTO(
                 booking.getId(),
-                booking.getLane().getId(),
+                laneId,
                 booking.getCustomerEmail(),
                 booking.getStart(),
                 booking.getEnd(),
                 booking.getStatus(),
-                booking.getLane().isChildFriendly()
+                isChildFriendly
         );
     }
 
@@ -139,5 +130,24 @@ public class BowlingBookingService {
                 requestDTO.end(),
                 bowlingLaneService.findFirstAvailableBowlingLane(requestDTO.start(), requestDTO.end(), requestDTO.childFriendly())
         );
+    }
+
+    public List<BowlingBookingDTO> getBowlingBookings() {
+        List<BowlingBooking> bookings = bowlingBookingRepository.findAll();
+        return bookings.stream().map(this::toDTO).toList();
+    }
+
+    public List<BowlingBookingDTO> getBowlingBookings(LocalDateTime fromDate, int limit) {
+        List<BowlingBooking> bookings = bowlingBookingRepository.findAllByStartBetween(fromDate, fromDate.plusDays(limit));
+        return bookings.stream().map(this::toDTO).toList();
+    }
+
+    public BowlingBookingDTO getBowlingBooking(Long id) {
+        return bowlingBookingRepository.findById(id).map(this::toDTO).orElseThrow(() -> new NotFoundException("Booking not found"));
+    }
+
+    public List<BowlingBookingDTO> getBowlingBookingsByCustomerEmail(String customerEmail) {
+        List<BowlingBooking> bookings = bowlingBookingRepository.findByCustomerEmail(customerEmail);
+        return bookings.stream().map(this::toDTO).toList();
     }
 }

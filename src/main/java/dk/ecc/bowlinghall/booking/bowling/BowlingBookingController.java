@@ -4,6 +4,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -17,24 +19,33 @@ public class BowlingBookingController {
 
     @PostMapping("/bowling")
     public ResponseEntity<BowlingBookingDTO> addBowlingBooking(@RequestBody BowlingBookingDTO bowlingBookingDTO) {
-        BowlingBookingDTO responseDTO = bowlingBookingService.addBowlingBooking(bowlingBookingDTO);
-        return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
+        var responseDTO = bowlingBookingService.addBowlingBooking(bowlingBookingDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
 
     @GetMapping("/bowling")
-    public List<BowlingBookingDTO> getBowlingBookings() {
-        return bowlingBookingService.getBowlingBookings();
+    public ResponseEntity<List<BowlingBookingDTO>> getBowlingBookings(
+            @RequestParam(required = false) Integer day,
+            @RequestParam(required = false) Integer month,
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) Integer limit
+    ) {
+        if(day == null) day = LocalDate.now().getDayOfMonth();
+        if(month == null) month = LocalDate.now().getMonthValue();
+        if(year == null) year = LocalDate.now().getYear();
+        if(limit == null) limit = 7;
+        return ResponseEntity.ok(bowlingBookingService.getBowlingBookings(LocalDateTime.of(year, month, day, 0, 0), limit));
     }
 
     @GetMapping("/bowling/{id}")
     public ResponseEntity<BowlingBookingDTO> getBowlingBooking(@PathVariable Long id) {
-        return ResponseEntity.of(bowlingBookingService.getBowlingBooking(id));
+        return ResponseEntity.ok(bowlingBookingService.getBowlingBooking(id));
     }
 
     @GetMapping("/bowling/email/{customerEmail}")
-    public List<BowlingBookingDTO> getBowlingBookingsByCustomerEmail(@PathVariable String customerEmail) {
-        return bowlingBookingService.getBowlingBookingsByCustomerEmail(customerEmail);
+    public ResponseEntity<List<BowlingBookingDTO>> getBowlingBookingsByCustomerEmail(@PathVariable String customerEmail) {
+        return ResponseEntity.ok(bowlingBookingService.getBowlingBookingsByCustomerEmail(customerEmail));
     }
 
     @PatchMapping("/bowling/{id}")

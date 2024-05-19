@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 public class BowlingLaneController {
@@ -15,6 +16,11 @@ public class BowlingLaneController {
 
     public BowlingLaneController(BowlingLaneService bowlingLaneService) {
         this.bowlingLaneService = bowlingLaneService;
+    }
+
+    @GetMapping("/lanes")
+    public ResponseEntity<List<BowlingLaneDTO>> getBowlingLanes() {
+        return ResponseEntity.ok(bowlingLaneService.getBowlingLaneDTOs());
     }
 
     @GetMapping("/bowling-lanes/availability")

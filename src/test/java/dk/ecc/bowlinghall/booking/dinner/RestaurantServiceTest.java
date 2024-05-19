@@ -4,7 +4,6 @@ import dk.ecc.bowlinghall.booking.Status;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
@@ -63,10 +62,9 @@ class RestaurantServiceTest {
     }
 
     @AfterEach
-    void tearDown(@Autowired JdbcTemplate jdbcTemplate) {
-        jdbcTemplate.execute("DELETE FROM restaurant_bookings");
-        jdbcTemplate.execute("DELETE FROM dinner_booking");
-        jdbcTemplate.execute("DELETE FROM restaurant");
+    void tearDown(@Autowired DinnerBookingRepository dinnerBookingRepository, @Autowired RestaurantRepository restaurantRepository) {
+        restaurantRepository.deleteAll();
+        dinnerBookingRepository.deleteAll();
     }
 
     @Test

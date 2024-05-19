@@ -1,9 +1,6 @@
 package dk.ecc.bowlinghall.booking.airhockey;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,7 +18,7 @@ public class AirHockeyTable {
     private Long id;
     private double pricePerHour;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<AirHockeyBooking> bookings = new ArrayList<>();
 
     public AirHockeyTable(double PricePerHour) {
