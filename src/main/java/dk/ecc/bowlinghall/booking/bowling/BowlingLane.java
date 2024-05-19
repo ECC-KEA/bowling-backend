@@ -21,7 +21,7 @@ public class BowlingLane {
 
     private boolean childFriendly;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<BowlingBooking> bookings = new ArrayList<>();
 
     public BowlingLane(double pricePerHour, boolean childFriendly) {
