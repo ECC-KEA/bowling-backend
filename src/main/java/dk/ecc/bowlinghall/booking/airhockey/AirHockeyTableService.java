@@ -14,8 +14,18 @@ public class AirHockeyTableService {
         this.airHockeyTableRepository = airHockeyTableRepository;
     }
 
+    public AirHockeyTableDTO toDTO(AirHockeyTable airHockeyTable) {
+        return new AirHockeyTableDTO(airHockeyTable.getId(), airHockeyTable.getPricePerHour());
+    }
+
     public List<AirHockeyTable> getAirHockeyTables() {
         return airHockeyTableRepository.findAll();
+    }
+
+    public List<AirHockeyTableDTO> getAirHockeyTableDTOs() {
+        return getAirHockeyTables().stream()
+                .map(this::toDTO)
+                .toList();
     }
 
     public AirHockeyTable getAirHockeyTableById(Long id) {
