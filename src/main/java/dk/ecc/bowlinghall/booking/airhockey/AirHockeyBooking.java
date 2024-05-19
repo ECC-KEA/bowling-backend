@@ -15,7 +15,8 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 public class AirHockeyBooking extends Booking {
-    @ManyToOne(cascade = CascadeType.ALL)
+
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE, CascadeType.DETACH})
     private AirHockeyTable table;
 
     public AirHockeyBooking(String customerEmail, LocalDateTime start, LocalDateTime end, AirHockeyTable table) {

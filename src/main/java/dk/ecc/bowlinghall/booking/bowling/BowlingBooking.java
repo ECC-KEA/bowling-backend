@@ -3,7 +3,6 @@ package dk.ecc.bowlinghall.booking.bowling;
 import dk.ecc.bowlinghall.booking.Booking;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +15,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 public class BowlingBooking extends Booking {
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE, CascadeType.DETACH})
     private BowlingLane lane;
 
     public BowlingBooking(String customerEmail, LocalDateTime start, LocalDateTime end, BowlingLane lane) {
