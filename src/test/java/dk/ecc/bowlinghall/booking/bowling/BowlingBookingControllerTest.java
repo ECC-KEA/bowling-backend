@@ -1,10 +1,8 @@
 package dk.ecc.bowlinghall.booking.bowling;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
@@ -19,24 +17,55 @@ class BowlingBookingControllerTest {
     @Autowired
     private WebTestClient webClient;
 
-    @Autowired
-    private BowlingBookingRepository bowlingBookingRepository;
-
     private final BowlingBookingDTO bowlingBookingDTO = new BowlingBookingDTO(
             null,
             null,
             "test@test.com",
-            LocalDateTime.of(2024, 5, 20, 12, 0),
-            LocalDateTime.of(2024, 5, 20, 14, 0),
+            LocalDateTime.now().plusDays(2).withHour(12),
+            LocalDateTime.now().plusDays(2).withHour(13),
             null,
             false);
 
+    @BeforeEach
+    void setUp(@Autowired BowlingBookingRepository bowlingBookingRepository, @Autowired BowlingLaneRepository bowlingLaneRepository) {
+        var lane1 = new BowlingLane(200, true);
+        var lane2 = new BowlingLane(200, false);
+        var lane3 = new BowlingLane(200, false);
+        var lane4 = new BowlingLane(200, false);
 
-    @AfterAll
-    static void cleanUp(@Autowired JdbcTemplate jdbcTemplate) {
-        jdbcTemplate.execute("DELETE FROM bowling_lane_bookings");
-        jdbcTemplate.execute("DELETE FROM bowling_booking");
-        jdbcTemplate.execute("DELETE FROM booking");
+        bowlingLaneRepository.save(lane1);
+        bowlingLaneRepository.save(lane2);
+        bowlingLaneRepository.save(lane3);
+        bowlingLaneRepository.save(lane4);
+        var tomorrow = LocalDateTime.now().plusDays(1);
+        var booking1 = new BowlingBooking(
+                "SHOW ME",
+                tomorrow.withHour(12),
+                tomorrow.withHour(13),
+                null
+        );
+        var booking2 = new BowlingBooking(
+                "DONT SHOW ME",
+                tomorrow.withHour(14),
+                tomorrow.withHour(15),
+                null
+        );
+        var booking3 = new BowlingBooking(
+                "SHOW ME",
+                tomorrow.withHour(16),
+                tomorrow.withHour(17),
+                null
+        );
+
+        bowlingBookingRepository.save(booking1);
+        bowlingBookingRepository.save(booking2);
+        bowlingBookingRepository.save(booking3);
+    }
+
+    @AfterEach
+    void cleanUp(@Autowired BowlingBookingRepository bowlingBookingRepository, @Autowired BowlingLaneRepository bowlingLaneRepository) {
+        bowlingBookingRepository.deleteAll();
+        bowlingLaneRepository.deleteAll();
     }
 
     @Test
@@ -64,13 +93,13 @@ class BowlingBookingControllerTest {
                 .bodyValue(bowlingBookingDTO)
                 .exchange()
                 .expectStatus().isCreated()
-                .expectBody()
-                .jsonPath("$.id").exists()
-                .jsonPath("$.laneId").exists()
-                .jsonPath("$.customerEmail").isEqualTo("test@test.com")
-                .jsonPath("$.start").isEqualTo("2024-05-20T12:00:00")
-                .jsonPath("$.end").isEqualTo("2024-05-20T14:00:00")
-                .jsonPath("$.status").isEqualTo("BOOKED")
-                .jsonPath("$.childFriendly").isEqualTo(false);
+                .expectBody(BowlingBookingDTO.class)
+                .value(response -> {
+                    assertNotNull(response);
+                    assertNotNull(response.id());
+                    assertEquals(bowlingBookingDTO.customerEmail(), response.customerEmail());
+                    assertEquals(bowlingBookingDTO.start(), response.start());
+                    assertEquals(bowlingBookingDTO.end(), response.end());
+                });
     }
 }

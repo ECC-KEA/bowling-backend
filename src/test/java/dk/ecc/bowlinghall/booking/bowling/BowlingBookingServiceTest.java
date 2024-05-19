@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,7 +20,6 @@ class BowlingBookingServiceTest {
 
     @BeforeEach
     void setUp(@Autowired BowlingBookingRepository bowlingBookingRepository) {
-        bowlingBookingRepository.deleteAll();
         var booking1 = new BowlingBooking(
                 "SHOW ME",
                 LocalDateTime.of(2025, 1, 1, 12, 0),
