@@ -1,5 +1,6 @@
 package dk.ecc.bowlinghall.booking.airhockey;
 
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -36,11 +37,16 @@ public class AirHockeyTableService {
         return airHockeyTableRepository.save(airHockeyTable);
     }
 
+    @Transactional
     public AirHockeyTable findFirstAvailableAirHockeyTable(LocalDateTime start, LocalDateTime end) {
         var tables = getAirHockeyTables();
         return tables.stream()
                 .filter(table -> table.isAvailable(start, end))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("No tables available"));
+    }
+
+    public boolean isAvailable(LocalDateTime start, LocalDateTime end) {
+        return getAirHockeyTables().stream().anyMatch(table -> table.isAvailable(start, end));
     }
 }

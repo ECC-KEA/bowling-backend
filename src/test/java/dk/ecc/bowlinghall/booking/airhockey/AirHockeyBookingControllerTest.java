@@ -2,6 +2,7 @@ package dk.ecc.bowlinghall.booking.airhockey;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import dk.ecc.bowlinghall.booking.Status;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -69,4 +70,52 @@ class AirHockeyBookingControllerTest {
                 });
     }
 
+    @Test
+    void getAirHockeyBooking() {
+        var id = 18L;
+        webClient
+                .get().uri("/airhockey/{id}", id)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(AirHockeyBookingDTO.class)
+                .value(response -> {
+                    assertNotNull(response);
+                    assertEquals(id, response.id());
+                });
+    }
+
+    @Test
+    void getAirHockeyBookingsByCustomerEmail() {
+        var customerEmail = "email@test.t";
+        webClient
+                .get().uri("/airhockey/email/{customerEmail}", customerEmail)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(AirHockeyBookingDTO.class)
+                .value(response -> {
+                    assertNotNull(response);
+                    assertFalse(response.isEmpty());
+                    assertTrue(response.stream().allMatch(booking -> booking.customerEmail().equals(customerEmail)));
+                });
+    }
+
+    //TODO figure out why test fails, when it succeed via Postman. - The test is identical to the one in BowlingBookingControllerTest which works.
+    @Test
+    void updatePartialAirHockeyBooking() {
+        var id = 1L;
+        var body = new AirHockeyBookingDTO(
+                null, null, null, null, null, Status.CANCELLED
+        );
+        webClient
+                .patch().uri("/airhockey/{id}", id)
+                .bodyValue(body)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(AirHockeyBookingDTO.class)
+                .value(response -> {
+                    assertNotNull(response);
+                    assertEquals(id, response.id());
+                    assertEquals(Status.CANCELLED, response.status());
+                });
+    }
 }

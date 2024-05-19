@@ -1,5 +1,7 @@
 package dk.ecc.bowlinghall.booking.bowling;
 
+import dk.ecc.bowlinghall.booking.Status;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -100,6 +102,24 @@ class BowlingBookingControllerTest {
                     assertEquals(bowlingBookingDTO.customerEmail(), response.customerEmail());
                     assertEquals(bowlingBookingDTO.start(), response.start());
                     assertEquals(bowlingBookingDTO.end(), response.end());
+                });
+    }
+
+    @Test
+    void updateBowlingBookingPartially() {
+        var id = 1L;
+        var body = new BowlingBookingDTO(
+                null, null, null, null, null, Status.CANCELLED, null
+        );
+        webClient.patch().uri("/bowling/{id}", id)
+                .bodyValue(body)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(BowlingBookingDTO.class)
+                .value(response -> {
+                    assertNotNull(response);
+                    assertEquals(id, response.id());
+                    assertEquals(Status.CANCELLED, response.status());
                 });
     }
 }

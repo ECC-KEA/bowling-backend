@@ -1,5 +1,6 @@
 package dk.ecc.bowlinghall.booking.airhockey;
 
+import org.springframework.http.HttpStatus;
 import dk.ecc.bowlinghall.booking.bowling.BowlingBookingDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,5 +48,12 @@ public class AirHockeyBookingController {
         var responseDTO = airHockeyBookingService.addAirHockeyBooking(airHockeyBookingDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
+
+    @PatchMapping("/airhockey/{id}")
+    public ResponseEntity<AirHockeyBookingDTO> updatePartialAirHockeyBooking(@PathVariable Long id, @RequestBody AirHockeyBookingDTO dto) {
+        AirHockeyBookingDTO responseDTO = airHockeyBookingService.updatePartialAirHockeyBooking(id, dto);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
+
 
 }

@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 public class BowlingBooking extends Booking {
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE, CascadeType.DETACH})
     private BowlingLane lane;
 
     public BowlingBooking(String customerEmail, LocalDateTime start, LocalDateTime end, BowlingLane lane) {

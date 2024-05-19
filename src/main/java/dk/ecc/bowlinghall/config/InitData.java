@@ -1,23 +1,17 @@
 package dk.ecc.bowlinghall.config;
 
-import dk.ecc.bowlinghall.booking.airhockey.AirHockeyBooking;
-import dk.ecc.bowlinghall.booking.airhockey.AirHockeyTable;
-import dk.ecc.bowlinghall.booking.airhockey.AirHockeyTableRepository;
 import dk.ecc.bowlinghall.booking.Status;
-import dk.ecc.bowlinghall.booking.airhockey.AirHockeyBookingRepository;
-import dk.ecc.bowlinghall.booking.bowling.BowlingBooking;
-import dk.ecc.bowlinghall.booking.bowling.BowlingBookingRepository;
-import dk.ecc.bowlinghall.booking.bowling.BowlingLane;
-import dk.ecc.bowlinghall.booking.bowling.BowlingLaneRepository;
-import dk.ecc.bowlinghall.booking.dinner.DinnerBookingRepository;
+import dk.ecc.bowlinghall.booking.airhockey.*;
+import dk.ecc.bowlinghall.booking.bowling.*;
+import dk.ecc.bowlinghall.booking.dinner.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import java.util.stream.IntStream;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
+import java.util.stream.IntStream;
+
 
 @Component
 @Profile("!test")
@@ -26,15 +20,23 @@ public class InitData implements CommandLineRunner {
     private final DinnerBookingRepository dinnerBookingRepository;
     private final BowlingBookingRepository bowlingBookingRepository;
     private final AirHockeyBookingRepository airHockeyBookingRepository;
+    private final BowlingBookingService bowlingBookingService;
+    private final AirHockeyBookingService airHockeyBookingService;
+    private final DinnerBookingService dinnerBookingService;
     private final BowlingLaneRepository bowlingLaneRepository;
     private final AirHockeyTableRepository airHockeyTableRepository;
+    private final RestaurantRepository restaurantRepository;
 
-    public InitData(DinnerBookingRepository dinnerBookingRepository, BowlingBookingRepository bowlingBookingRepository, AirHockeyBookingRepository airHockeyBookingRepository, BowlingLaneRepository bowlingLaneRepository, AirHockeyTableRepository airHockeyTableRepository) {
+    public InitData(DinnerBookingRepository dinnerBookingRepository, BowlingBookingRepository bowlingBookingRepository, AirHockeyBookingRepository airHockeyBookingRepository, BowlingBookingService bowlingBookingService, AirHockeyBookingService airHockeyBookingService, DinnerBookingService dinnerBookingService, BowlingLaneRepository bowlingLaneRepository, AirHockeyTableRepository airHockeyTableRepository, RestaurantRepository restaurantRepository) {
         this.dinnerBookingRepository = dinnerBookingRepository;
         this.bowlingBookingRepository = bowlingBookingRepository;
         this.airHockeyBookingRepository = airHockeyBookingRepository;
+        this.bowlingBookingService = bowlingBookingService;
+        this.airHockeyBookingService = airHockeyBookingService;
+        this.dinnerBookingService = dinnerBookingService;
         this.bowlingLaneRepository = bowlingLaneRepository;
         this.airHockeyTableRepository = airHockeyTableRepository;
+        this.restaurantRepository = restaurantRepository;
     }
 
     @Override
@@ -45,163 +47,125 @@ public class InitData implements CommandLineRunner {
         if (airHockeyTableRepository.count() == 0) {
             IntStream.range(0, 6).mapToObj(i -> new AirHockeyTable(50)).forEach(airHockeyTableRepository::save);
         }
+        if (restaurantRepository.count() == 0) {
+            restaurantRepository.save(new Restaurant(100));
+        }
         if (bowlingBookingRepository.count() == 0) {
             createBowlingBookings();
         }
         if (airHockeyBookingRepository.count() == 0) {
             createAirHockeyBookings();
         }
+        if (dinnerBookingRepository.count() == 0) {
+            createDinnerBookings();
+        }
+
     }
 
     private void createBowlingBookings() {
-        var today = LocalDateTime.now();
+        var tomorrow = LocalDateTime.now().plusDays(1);
         var nextWeek = LocalDateTime.now().plusWeeks(1);
 
-        var booking1 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", today.withHour(10), today.withHour(11), null));
-        var booking2 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", today.withHour(11), today.withHour(12), null));
-        var booking3 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", today.withHour(12), today.withHour(13), null));
-        var booking4 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", today.withHour(13), today.withHour(14), null));
-        var booking5 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", today.withHour(14), today.withHour(15), null));
-        var booking6 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", today.withHour(15), today.withHour(16), null));
-        var booking7 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", today.withHour(16), today.withHour(17), null));
-        var booking8 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", today.withHour(17), today.withHour(18), null));
-
-        var booking9 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", nextWeek.withHour(12), nextWeek.withHour(13), null));
-        var booking10 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", nextWeek.plusDays(1).withHour(13), nextWeek.plusDays(1).withHour(14), null));
-        var booking11 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", nextWeek.plusDays(2).withHour(14), nextWeek.plusDays(2).withHour(15), null));
-        var booking12 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", nextWeek.plusDays(3).withHour(15), nextWeek.plusDays(3).withHour(16), null));
-        var booking13 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", nextWeek.plusDays(4).withHour(16), nextWeek.plusDays(4).withHour(17), null));
-        var booking14 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", nextWeek.plusDays(5).withHour(17), nextWeek.plusDays(5).withHour(18), null));
-        var booking15 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", nextWeek.plusDays(6).withHour(18), nextWeek.plusDays(6).withHour(19), null));
-        var booking16 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", nextWeek.plusDays(7).withHour(13), nextWeek.plusDays(7).withHour(14), null));
-        var booking17 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", nextWeek.plusDays(8).withHour(14), nextWeek.plusDays(8).withHour(15), null));
-        var booking18 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", nextWeek.plusDays(9).withHour(15), nextWeek.plusDays(9).withHour(16), null));
-        var booking19 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", nextWeek.plusDays(10).withHour(16), nextWeek.plusDays(10).withHour(17), null));
-        var booking20 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", nextWeek.plusDays(11).withHour(17), nextWeek.plusDays(11).withHour(18), null));
-        var booking21 = bowlingBookingRepository.save(new BowlingBooking("email@test.t", nextWeek.plusDays(12).withHour(18), nextWeek.plusDays(12).withHour(19), null));
-
-        booking1.setLane(bowlingLaneRepository.findById(1L).get());
-        booking2.setLane(bowlingLaneRepository.findById(2L).get());
-        booking3.setLane(bowlingLaneRepository.findById(3L).get());
-        booking4.setLane(bowlingLaneRepository.findById(4L).get());
-        booking5.setLane(bowlingLaneRepository.findById(5L).get());
-        booking6.setLane(bowlingLaneRepository.findById(6L).get());
-        booking7.setLane(bowlingLaneRepository.findById(7L).get());
-        booking8.setLane(bowlingLaneRepository.findById(8L).get());
-        booking9.setLane(bowlingLaneRepository.findById(9L).get());
-        booking10.setLane(bowlingLaneRepository.findById(10L).get());
-        booking11.setLane(bowlingLaneRepository.findById(11L).get());
-        booking12.setLane(bowlingLaneRepository.findById(12L).get());
-        booking13.setLane(bowlingLaneRepository.findById(13L).get());
-        booking14.setLane(bowlingLaneRepository.findById(14L).get());
-        booking15.setLane(bowlingLaneRepository.findById(15L).get());
-        booking16.setLane(bowlingLaneRepository.findById(16L).get());
-        booking17.setLane(bowlingLaneRepository.findById(17L).get());
-        booking18.setLane(bowlingLaneRepository.findById(18L).get());
-        booking19.setLane(bowlingLaneRepository.findById(19L).get());
-        booking20.setLane(bowlingLaneRepository.findById(20L).get());
-        booking21.setLane(bowlingLaneRepository.findById(21L).get());
-
-        bowlingBookingRepository.saveAll(
-                Set.of(
-                        booking1,
-                        booking2,
-                        booking3,
-                        booking4,
-                        booking5,
-                        booking6,
-                        booking7,
-                        booking8,
-                        booking9,
-                        booking10,
-                        booking11,
-                        booking12,
-                        booking13,
-                        booking14,
-                        booking15,
-                        booking16,
-                        booking17,
-                        booking18,
-                        booking19,
-                        booking20,
-                        booking21
-                )
+        List<BowlingBookingDTO> bookings = List.of(
+                new BowlingBookingDTO(null, null, "email@test.t", tomorrow.withHour(10), tomorrow.withHour(11), Status.BOOKED, true),
+                new BowlingBookingDTO(null, null, "email@test.t", tomorrow.withHour(11), tomorrow.withHour(12), Status.BOOKED, false),
+                new BowlingBookingDTO(null, null, "email@test.t", tomorrow.withHour(12), tomorrow.withHour(13), Status.BOOKED, false),
+                new BowlingBookingDTO(null, null, "email@test.t", tomorrow.withHour(13), tomorrow.withHour(14), Status.BOOKED, false),
+                new BowlingBookingDTO(null, null, "email@test.t", tomorrow.withHour(14), tomorrow.withHour(15), Status.BOOKED, true),
+                new BowlingBookingDTO(null, null, "email@test.t", tomorrow.withHour(15), tomorrow.withHour(16), Status.BOOKED, false),
+                new BowlingBookingDTO(null, null, "email@test.t", tomorrow.withHour(16), tomorrow.withHour(17), Status.BOOKED, false),
+                new BowlingBookingDTO(null, null, "email@test.t", tomorrow.withHour(17), tomorrow.withHour(18), Status.BOOKED, false),
+                new BowlingBookingDTO(null, null, "email@test.t", tomorrow.withHour(18), tomorrow.withHour(19), Status.BOOKED, true),
+                new BowlingBookingDTO(null, null, "email@test.t", tomorrow.withHour(19), tomorrow.withHour(20), Status.BOOKED, false),
+                new BowlingBookingDTO(null, null, "email@test.t", nextWeek.withHour(10), nextWeek.withHour(11), Status.BOOKED, true),
+                new BowlingBookingDTO(null, null, "email@test.t", nextWeek.withHour(11), nextWeek.withHour(12), Status.BOOKED, false),
+                new BowlingBookingDTO(null, null, "email@test.t", nextWeek.withHour(12), nextWeek.withHour(13), Status.BOOKED, false),
+                new BowlingBookingDTO(null, null, "email@test.t", nextWeek.withHour(13), nextWeek.withHour(14), Status.BOOKED, false),
+                new BowlingBookingDTO(null, null, "email@test.t", nextWeek.withHour(14), nextWeek.withHour(15), Status.BOOKED, true),
+                new BowlingBookingDTO(null, null, "email@test.t", nextWeek.withHour(15), nextWeek.withHour(16), Status.BOOKED, false),
+                new BowlingBookingDTO(null, null, "email@test.t", nextWeek.withHour(16), nextWeek.withHour(17), Status.BOOKED, false),
+                new BowlingBookingDTO(null, null, "email@test.t", nextWeek.withHour(17), nextWeek.withHour(18), Status.BOOKED, false),
+                new BowlingBookingDTO(null, null, "email@test.t", nextWeek.withHour(18), nextWeek.withHour(19), Status.BOOKED, true),
+                new BowlingBookingDTO(null, null, "email@test.t", nextWeek.withHour(19), nextWeek.withHour(20), Status.BOOKED, false)
         );
+        bookings.forEach(bowlingBookingService::addBowlingBooking);
     }
 
     private void createAirHockeyBookings() {
-        var today = LocalDateTime.now();
+        var tomorrow = LocalDateTime.now().plusDays(1);
         var nextWeek = LocalDateTime.now().plusWeeks(1);
 
-        var booking1 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", today.withHour(10), today.withHour(11), null));
-        var booking2 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", today.withHour(11), today.withHour(12), null));
-        var booking3 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", today.withHour(12), today.withHour(13), null));
-        var booking4 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", today.withHour(13), today.withHour(14), null));
-        var booking5 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", today.withHour(14), today.withHour(15), null));
-        var booking6 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", today.withHour(15), today.withHour(16), null));
-        var booking7 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", today.withHour(16), today.withHour(17), null));
-        var booking8 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", today.withHour(17), today.withHour(18), null));
-
-        var booking9 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", nextWeek.withHour(12), nextWeek.withHour(13), null));
-        var booking10 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", nextWeek.plusDays(1).withHour(13), nextWeek.plusDays(1).withHour(14), null));
-        var booking11 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", nextWeek.plusDays(2).withHour(14), nextWeek.plusDays(2).withHour(15), null));
-        var booking12 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", nextWeek.plusDays(3).withHour(15), nextWeek.plusDays(3).withHour(16), null));
-        var booking13 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", nextWeek.plusDays(4).withHour(16), nextWeek.plusDays(4).withHour(17), null));
-        var booking14 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", nextWeek.plusDays(5).withHour(17), nextWeek.plusDays(5).withHour(18), null));
-        var booking15 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", nextWeek.plusDays(6).withHour(18), nextWeek.plusDays(6).withHour(19), null));
-        var booking16 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", nextWeek.plusDays(7).withHour(13), nextWeek.plusDays(7).withHour(14), null));
-        var booking17 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", nextWeek.plusDays(8).withHour(14), nextWeek.plusDays(8).withHour(15), null));
-        var booking18 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", nextWeek.plusDays(9).withHour(15), nextWeek.plusDays(9).withHour(16), null));
-        var booking19 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", nextWeek.plusDays(10).withHour(16), nextWeek.plusDays(10).withHour(17), null));
-        var booking20 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", nextWeek.plusDays(11).withHour(17), nextWeek.plusDays(11).withHour(18), null));
-        var booking21 = airHockeyBookingRepository.save(new AirHockeyBooking("email@test.t", nextWeek.plusDays(12).withHour(18), nextWeek.plusDays(12).withHour(19), null));
-
-        booking1.setTable(airHockeyTableRepository.findById(1L).get());
-        booking2.setTable(airHockeyTableRepository.findById(2L).get());
-        booking3.setTable(airHockeyTableRepository.findById(3L).get());
-        booking4.setTable(airHockeyTableRepository.findById(4L).get());
-        booking5.setTable(airHockeyTableRepository.findById(5L).get());
-        booking6.setTable(airHockeyTableRepository.findById(1L).get());
-        booking7.setTable(airHockeyTableRepository.findById(2L).get());
-        booking8.setTable(airHockeyTableRepository.findById(3L).get());
-        booking9.setTable(airHockeyTableRepository.findById(4L).get());
-        booking10.setTable(airHockeyTableRepository.findById(5L).get());
-        booking11.setTable(airHockeyTableRepository.findById(1L).get());
-        booking12.setTable(airHockeyTableRepository.findById(2L).get());
-        booking13.setTable(airHockeyTableRepository.findById(3L).get());
-        booking14.setTable(airHockeyTableRepository.findById(4L).get());
-        booking15.setTable(airHockeyTableRepository.findById(5L).get());
-        booking16.setTable(airHockeyTableRepository.findById(1L).get());
-        booking17.setTable(airHockeyTableRepository.findById(2L).get());
-        booking18.setTable(airHockeyTableRepository.findById(3L).get());
-        booking19.setTable(airHockeyTableRepository.findById(4L).get());
-        booking20.setTable(airHockeyTableRepository.findById(5L).get());
-        booking21.setTable(airHockeyTableRepository.findById(1L).get());
-
-        airHockeyBookingRepository.saveAll(
-                Set.of(
-                        booking1,
-                        booking2,
-                        booking3,
-                        booking4,
-                        booking5,
-                        booking6,
-                        booking7,
-                        booking8,
-                        booking9,
-                        booking10,
-                        booking11,
-                        booking12,
-                        booking13,
-                        booking14,
-                        booking15,
-                        booking16,
-                        booking17,
-                        booking18,
-                        booking19,
-                        booking20,
-                        booking21
-                )
+        List<AirHockeyBookingDTO> bookings = List.of(
+                new AirHockeyBookingDTO(null, null, "email@test.t", tomorrow.withHour(10), tomorrow.withHour(11), Status.BOOKED),
+                new AirHockeyBookingDTO(null, null, "email@test.t", tomorrow.withHour(11), tomorrow.withHour(12), Status.BOOKED),
+                new AirHockeyBookingDTO(null, null, "email@test.t", tomorrow.withHour(12), tomorrow.withHour(13), Status.BOOKED),
+                new AirHockeyBookingDTO(null, null, "email@test.t", tomorrow.withHour(13), tomorrow.withHour(14), Status.BOOKED),
+                new AirHockeyBookingDTO(null, null, "email@test.t", tomorrow.withHour(14), tomorrow.withHour(15), Status.BOOKED),
+                new AirHockeyBookingDTO(null, null, "email@test.t", tomorrow.withHour(15), tomorrow.withHour(16), Status.BOOKED),
+                new AirHockeyBookingDTO(null, null, "email@test.t", tomorrow.withHour(16), tomorrow.withHour(17), Status.BOOKED),
+                new AirHockeyBookingDTO(null, null, "email@test.t", tomorrow.withHour(17), tomorrow.withHour(18), Status.BOOKED),
+                new AirHockeyBookingDTO(null, null, "email@test.t", tomorrow.withHour(18), tomorrow.withHour(19), Status.BOOKED),
+                new AirHockeyBookingDTO(null, null, "email@test.t", tomorrow.withHour(19), tomorrow.withHour(20), Status.BOOKED),
+                new AirHockeyBookingDTO(null, null, "email@test.t", nextWeek.withHour(10), nextWeek.withHour(11), Status.BOOKED),
+                new AirHockeyBookingDTO(null, null, "email@test.t", nextWeek.withHour(11), nextWeek.withHour(12), Status.BOOKED),
+                new AirHockeyBookingDTO(null, null, "email@test.t", nextWeek.withHour(12), nextWeek.withHour(13), Status.BOOKED),
+                new AirHockeyBookingDTO(null, null, "email@test.t", nextWeek.withHour(13), nextWeek.withHour(14), Status.BOOKED),
+                new AirHockeyBookingDTO(null, null, "email@test.t", nextWeek.withHour(14), nextWeek.withHour(15), Status.BOOKED),
+                new AirHockeyBookingDTO(null, null, "email@test.t", nextWeek.withHour(15), nextWeek.withHour(16), Status.BOOKED),
+                new AirHockeyBookingDTO(null, null, "email@test.t", nextWeek.withHour(16), nextWeek.withHour(17), Status.BOOKED),
+                new AirHockeyBookingDTO(null, null, "email@test.t", nextWeek.withHour(17), nextWeek.withHour(18), Status.BOOKED),
+                new AirHockeyBookingDTO(null, null, "email@test.t", nextWeek.withHour(18), nextWeek.withHour(19), Status.BOOKED),
+                new AirHockeyBookingDTO(null, null, "email@test.t", nextWeek.withHour(19), nextWeek.withHour(20), Status.BOOKED)
         );
+        bookings.forEach(airHockeyBookingService::addAirHockeyBooking);
+    }
+
+    private void createDinnerBookings() {
+        var tomorrow = LocalDateTime.now().plusDays(1);
+        var nextWeek = LocalDateTime.now().plusWeeks(1);
+
+        List<DinnerBookingDTO> bookings = List.of(
+                new DinnerBookingDTO(null, "email@test.t", tomorrow.withHour(10), tomorrow.withHour(11), Status.BOOKED, 2),
+                new DinnerBookingDTO(null, "email@test.t", tomorrow.withHour(11), tomorrow.withHour(12), Status.BOOKED, 4),
+                new DinnerBookingDTO(null, "email@test.t", tomorrow.withHour(12), tomorrow.withHour(13), Status.BOOKED, 6),
+                new DinnerBookingDTO(null, "email@test.t", tomorrow.withHour(13), tomorrow.withHour(14), Status.BOOKED, 8),
+                new DinnerBookingDTO(null, "email@test.t", tomorrow.withHour(14), tomorrow.withHour(15), Status.BOOKED, 10),
+                new DinnerBookingDTO(null, "email@test.t", tomorrow.withHour(15), tomorrow.withHour(16), Status.BOOKED, 2),
+                new DinnerBookingDTO(null, "email@test.t", tomorrow.withHour(16), tomorrow.withHour(17), Status.BOOKED, 4),
+                new DinnerBookingDTO(null, "email@test.t", tomorrow.withHour(17), tomorrow.withHour(18), Status.BOOKED, 6),
+                new DinnerBookingDTO(null, "email@test.t", tomorrow.withHour(18), tomorrow.withHour(19), Status.BOOKED, 8),
+                new DinnerBookingDTO(null, "email@test.t", tomorrow.withHour(19), tomorrow.withHour(20), Status.BOOKED, 10),
+                new DinnerBookingDTO(null, "email@test.t", nextWeek.withHour(10), nextWeek.withHour(11), Status.BOOKED, 2),
+                new DinnerBookingDTO(null, "email@test.t", nextWeek.withHour(11), nextWeek.withHour(12), Status.BOOKED, 4),
+                new DinnerBookingDTO(null, "email@test.t", nextWeek.withHour(12), nextWeek.withHour(13), Status.BOOKED, 6),
+                new DinnerBookingDTO(null, "email@test.t", nextWeek.withHour(13), nextWeek.withHour(14), Status.BOOKED, 8),
+                new DinnerBookingDTO(null, "email@test.t", nextWeek.withHour(14), nextWeek.withHour(15), Status.BOOKED, 10),
+                new DinnerBookingDTO(null, "email@test.t", nextWeek.withHour(15), nextWeek.withHour(16), Status.BOOKED, 2),
+                new DinnerBookingDTO(null, "email@test.t", nextWeek.withHour(16), nextWeek.withHour(17), Status.BOOKED, 4),
+                new DinnerBookingDTO(null, "email@test.t", nextWeek.withHour(17), nextWeek.withHour(18), Status.BOOKED, 6),
+                new DinnerBookingDTO(null, "email@test.t", nextWeek.withHour(18), nextWeek.withHour(19), Status.BOOKED, 8),
+                new DinnerBookingDTO(null, "email@test.t", nextWeek.withHour(19), nextWeek.withHour(20), Status.BOOKED, 10),
+                new DinnerBookingDTO(null, "email@test.t", nextWeek.plusDays(1).withHour(10), nextWeek.plusDays(1).withHour(11), Status.BOOKED, 2),
+                new DinnerBookingDTO(null, "email@test.t", nextWeek.plusDays(1).withHour(11), nextWeek.plusDays(1).withHour(12), Status.BOOKED, 4),
+                new DinnerBookingDTO(null, "email@test.t", nextWeek.plusDays(1).withHour(12), nextWeek.plusDays(1).withHour(13), Status.BOOKED, 6),
+                new DinnerBookingDTO(null, "email@test.t", nextWeek.plusDays(1).withHour(13), nextWeek.plusDays(1).withHour(14), Status.BOOKED, 8),
+                new DinnerBookingDTO(null, "email@test.t", nextWeek.plusDays(1).withHour(14), nextWeek.plusDays(1).withHour(15), Status.BOOKED, 10),
+                new DinnerBookingDTO(null, "email@test.t", nextWeek.plusDays(1).withHour(15), nextWeek.plusDays(1).withHour(16), Status.BOOKED, 2),
+                new DinnerBookingDTO(null, "email@test.t", nextWeek.plusDays(1).withHour(16), nextWeek.plusDays(1).withHour(17), Status.BOOKED, 4),
+                new DinnerBookingDTO(null, "email@test.t", nextWeek.plusDays(1).withHour(17), nextWeek.plusDays(1).withHour(18), Status.BOOKED, 6),
+                new DinnerBookingDTO(null, "email@test.t", nextWeek.plusDays(1).withHour(18), nextWeek.plusDays(1).withHour(19), Status.BOOKED, 8),
+                new DinnerBookingDTO(null, "email@test.t", nextWeek.plusDays(1).withHour(19), nextWeek.plusDays(1).withHour(20), Status.BOOKED, 10),
+                new DinnerBookingDTO(null, "email@test.t", nextWeek.plusDays(2).withHour(10), nextWeek.plusDays(2).withHour(11), Status.BOOKED, 2),
+                new DinnerBookingDTO(null, "email@test.t", nextWeek.plusDays(2).withHour(11), nextWeek.plusDays(2).withHour(12), Status.BOOKED, 4),
+                new DinnerBookingDTO(null, "email@test.t", nextWeek.plusDays(2).withHour(12), nextWeek.plusDays(2).withHour(13), Status.BOOKED, 6),
+                new DinnerBookingDTO(null, "email@test.t", nextWeek.plusDays(2).withHour(13), nextWeek.plusDays(2).withHour(14), Status.BOOKED, 8),
+                new DinnerBookingDTO(null, "email@test.t", nextWeek.plusDays(2).withHour(14), nextWeek.plusDays(2).withHour(15), Status.BOOKED, 10),
+                new DinnerBookingDTO(null, "email@test.t", nextWeek.plusDays(2).withHour(15), nextWeek.plusDays(2).withHour(16), Status.BOOKED, 2),
+                new DinnerBookingDTO(null, "email@test.t", nextWeek.plusDays(2).withHour(16), nextWeek.plusDays(2).withHour(17), Status.BOOKED, 4),
+                new DinnerBookingDTO(null, "email@test.t", nextWeek.plusDays(2).withHour(17), nextWeek.plusDays(2).withHour(18), Status.BOOKED, 6),
+                new DinnerBookingDTO(null, "email@test.t", nextWeek.plusDays(2).withHour(18), nextWeek.plusDays(2).withHour(19), Status.BOOKED, 8),
+                new DinnerBookingDTO(null, "email@test.t", nextWeek.plusDays(2).withHour(19), nextWeek.plusDays(2).withHour(20), Status.BOOKED, 10)
+        );
+        bookings.forEach(dinnerBookingService::create);
     }
 }
