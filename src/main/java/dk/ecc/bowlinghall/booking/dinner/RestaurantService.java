@@ -3,6 +3,8 @@ package dk.ecc.bowlinghall.booking.dinner;
 import dk.ecc.bowlinghall.error.ValidationException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class RestaurantService {
 
@@ -41,5 +43,15 @@ public class RestaurantService {
         }
         restaurant.addBooking(dinnerBooking);
         save(restaurant);
+    }
+
+    public boolean isAvailable(LocalDateTime start, LocalDateTime end, int numberOfGuests) {
+        System.out.println("RestaurantService.isAvailable");
+        var restaurant = getRestaurant();
+        System.out.println("restaurant = [" + restaurant + "]");
+        System.out.println("start = [" + start + "], end = [" + end + "], numberOfGuests = [" + numberOfGuests + "]");
+        int remainingCapacity = restaurant.getRemainingCapacityByStartAndEnd(start, end);
+        System.out.println("remainingCapacity = [" + remainingCapacity + "]");
+        return remainingCapacity >= numberOfGuests;
     }
 }

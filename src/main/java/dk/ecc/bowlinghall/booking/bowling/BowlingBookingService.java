@@ -84,6 +84,10 @@ public class BowlingBookingService {
                         statusChanged.set(true);
                         if (b.getLane() != null) b.getLane().removeBooking(b);
                     }
+                    if (key.equals("laneId") && !statusChanged.get() && !timeChanged.get()) {
+                        BowlingLane lane = bowlingLaneService.getBowlingLaneById((Long) value);
+                        ReflectionUtils.setField(field, b, lane);
+                    }
                     ReflectionUtils.setField(field, b, value);
                     fieldUpdated.set(true);
                 }

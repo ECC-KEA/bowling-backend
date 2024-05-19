@@ -35,4 +35,8 @@ public class AirHockeyTableService {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("No tables available"));
     }
+
+    public boolean isAvailable(LocalDateTime start, LocalDateTime end) {
+        return getAirHockeyTables().stream().anyMatch(table -> table.isAvailable(start, end));
+    }
 }

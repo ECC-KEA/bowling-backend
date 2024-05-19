@@ -19,7 +19,6 @@ public class BowlingLaneService {
         return bowlingLaneRepository.findAll();
     }
 
-    //TODO: Find out if this is needed
     public BowlingLane getBowlingLaneById(Long id) {
         return bowlingLaneRepository.findById(id).orElseThrow();
     }
@@ -35,5 +34,9 @@ public class BowlingLaneService {
                 .filter(lane -> lane.isAvailable(start, end) && lane.isChildFriendly() == childFriendly)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("No lanes available"));
+    }
+
+    public boolean isAvailable(LocalDateTime start, LocalDateTime end) {
+        return getBowlingLanes().stream().anyMatch(lane -> lane.isAvailable(start, end));
     }
 }
