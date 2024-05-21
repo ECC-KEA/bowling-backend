@@ -19,4 +19,10 @@ public class Employee {
     private String firstName;
 
     private String lastName;
+
+    public Employee(EmpType empType, String firstName, String lastName) {
+        this.empType = empType;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
 }
