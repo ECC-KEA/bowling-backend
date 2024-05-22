@@ -1,9 +1,11 @@
 package dk.ecc.bowlinghall.booking.dinner;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 public interface DinnerBookingRepository extends JpaRepository<DinnerBooking, Long> {
-    List<DinnerBooking> findByCustomerEmail(String customerEmail);
+    Page<DinnerBooking> findByCustomerEmail(String customerEmail, LocalDateTime now, Pageable pageable);
 }
