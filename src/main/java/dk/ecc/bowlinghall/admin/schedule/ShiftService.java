@@ -59,9 +59,19 @@ public class ShiftService {
         return toDTO(shiftRepository.save(shift));
     }
 
-    public ShiftDTO updateShift(Long id, ShiftDTO shiftDTO) {
+    public ShiftDTO patchShift(Long id, ShiftDTO shiftDTO) {
         var shift = fromDTO(getShift(id));
-        shift.setStartAndEnd(shiftDTO.start(), shiftDTO.end());
+        var start = shiftDTO.start();
+        var end = shiftDTO.end();
+
+        if (start != null && end != null) {
+            shift.setStartAndEnd(start, end);
+        } else if (start != null) {
+            shift.setStart(start);
+        } else if (end != null) {
+            shift.setEnd(end);
+        }
+
         return toDTO(shiftRepository.save(shift));
     }
 

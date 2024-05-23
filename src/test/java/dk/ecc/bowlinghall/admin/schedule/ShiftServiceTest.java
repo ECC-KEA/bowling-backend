@@ -88,7 +88,7 @@ class ShiftServiceTest {
         var nextWeek = LocalDateTime.now().plusWeeks(1);
         var updatedShiftDTO = new ShiftDTO(id, null, nextWeek.withHour(8), nextWeek.withHour(16));
 
-        var updatedShift = shiftService.updateShift(id, updatedShiftDTO);
+        var updatedShift = shiftService.patchShift(id, updatedShiftDTO);
 
         assertEquals(id, updatedShift.id());
         assertEquals(nextWeek.withHour(8), updatedShift.start());
