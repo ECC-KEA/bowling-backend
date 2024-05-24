@@ -42,7 +42,6 @@ public class AirHockeyBookingController {
             @PathVariable String customerEmail,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        System.out.println("getAirHockeyBookingsByCustomerEmail was called");
         return ResponseEntity.ok(airHockeyBookingService.getAirHockeyBookingsByCustomerEmail(customerEmail, page, size));
     }
 

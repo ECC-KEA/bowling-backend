@@ -37,7 +37,6 @@ public class DinnerBookingController {
             @PathVariable String customerEmail,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        System.out.println("getDinnerBookingsByCustomerEmail was called");
         return ResponseEntity.ok(dinnerBookingService.getDinnerBookingsByEmail(customerEmail, page, size));
     }
 }

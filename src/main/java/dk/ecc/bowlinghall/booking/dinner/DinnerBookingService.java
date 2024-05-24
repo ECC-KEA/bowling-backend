@@ -126,7 +126,7 @@ public class DinnerBookingService {
 
     public Page<DinnerBookingDTO> getDinnerBookingsByEmail(String customerEmail, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("start"));
-        Page<DinnerBooking> bookings = dinnerBookingRepository.findByCustomerEmail(customerEmail, LocalDateTime.now(), pageable);
+        Page<DinnerBooking> bookings = dinnerBookingRepository.findByCustomerEmailAndStartAfter(customerEmail, LocalDateTime.now(), pageable);
         return bookings.map(this::toDTO);
     }
 

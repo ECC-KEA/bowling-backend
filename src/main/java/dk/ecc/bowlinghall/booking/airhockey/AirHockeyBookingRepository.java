@@ -10,5 +10,5 @@ import java.util.List;
 public interface AirHockeyBookingRepository extends JpaRepository<AirHockeyBooking, Long> {
     List<AirHockeyBooking> findAllByStartBetween(LocalDateTime fromDate, LocalDateTime toDate);
 
-    Page<AirHockeyBooking> findByCustomerEmail(String customerEmail, LocalDateTime now, Pageable pageable);
+    Page<AirHockeyBooking> findByCustomerEmailAndStartAfter(String customerEmail, LocalDateTime now, Pageable pageable);
 }
