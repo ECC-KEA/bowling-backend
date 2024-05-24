@@ -6,6 +6,9 @@ import dk.ecc.bowlinghall.booking.Status;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
@@ -42,10 +45,17 @@ class AirHockeyBookingControllerTest {
                 LocalDateTime.now().plusDays(1).withHour(15),
                 null
         );
+        var booking4 = new AirHockeyBooking(
+                "TEST@EMAIL",
+                LocalDateTime.now().plusDays(1).withHour(15),
+                LocalDateTime.now().plusDays(1).withHour(16),
+                null
+        );
 
         var savedBooking = airHockeyBookingRepository.save(booking1);
         airHockeyBookingRepository.save(booking2);
         airHockeyBookingRepository.save(booking3);
+        airHockeyBookingRepository.save(booking4);
 
         id = savedBooking.getId();
     }
@@ -90,16 +100,18 @@ class AirHockeyBookingControllerTest {
     @Test
     void getAirHockeyBookingsByCustomerEmail() {
         var customerEmail = "TEST@EMAIL";
-        webClient
-                .get().uri("/airhockey/email/{customerEmail}", customerEmail)
+        webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/airhockey/email/{customerEmail}")
+                        .queryParam("page", 0)
+                        .queryParam("size", 2)
+                        .build(customerEmail))
                 .exchange()
                 .expectStatus().isOk()
-                .expectBodyList(AirHockeyBookingDTO.class)
-                .value(response -> {
-                    assertNotNull(response);
-                    assertFalse(response.isEmpty());
-                    assertTrue(response.stream().allMatch(booking -> booking.customerEmail().equals(customerEmail)));
-                });
+                .expectBody()
+                .jsonPath("$.content.length()").isEqualTo(2)
+                .jsonPath("$.content[0].customerEmail").isEqualTo(customerEmail)
+                .jsonPath("$.content[1].customerEmail").isEqualTo(customerEmail);
     }
 
     @Test

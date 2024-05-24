@@ -49,7 +49,7 @@ public class AirHockeyBookingService {
 
     public Page<AirHockeyBookingDTO> getAirHockeyBookingsByCustomerEmail(String customerEmail, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("start"));
-        Page<AirHockeyBooking> bookings = airHockeyBookingRepository.findByCustomerEmail(customerEmail, LocalDateTime.now(), pageable);
+        Page<AirHockeyBooking> bookings = airHockeyBookingRepository.findByCustomerEmailAndStartAfter(customerEmail, LocalDateTime.now(), pageable);
         return bookings.map(this::toDTO);
     }
 
