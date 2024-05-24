@@ -1,7 +1,6 @@
 package dk.ecc.bowlinghall.booking.airhockey;
 
-import org.springframework.http.HttpStatus;
-import dk.ecc.bowlinghall.booking.bowling.BowlingBookingDTO;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,8 +38,12 @@ public class AirHockeyBookingController {
     }
 
     @GetMapping("/airhockey/email/{customerEmail}")
-    public ResponseEntity<List<AirHockeyBookingDTO>> getAirHockeyBookingsByCustomerEmail(@PathVariable String customerEmail) {
-        return ResponseEntity.ok(airHockeyBookingService.getAirHockeyBookingsByCustomerEmail(customerEmail));
+    public ResponseEntity<Page<AirHockeyBookingDTO>> getAirHockeyBookingsByCustomerEmail(
+            @PathVariable String customerEmail,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        System.out.println("getAirHockeyBookingsByCustomerEmail was called");
+        return ResponseEntity.ok(airHockeyBookingService.getAirHockeyBookingsByCustomerEmail(customerEmail, page, size));
     }
 
     @PostMapping("/airhockey")

@@ -1,5 +1,6 @@
 package dk.ecc.bowlinghall.booking.bowling;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,8 +45,12 @@ public class BowlingBookingController {
     }
 
     @GetMapping("/bowling/email/{customerEmail}")
-    public ResponseEntity<List<BowlingBookingDTO>> getBowlingBookingsByCustomerEmail(@PathVariable String customerEmail) {
-        return ResponseEntity.ok(bowlingBookingService.getBowlingBookingsByCustomerEmail(customerEmail));
+    public ResponseEntity<Page<BowlingBookingDTO>> getBowlingBookingsByCustomerEmail(
+            @PathVariable String customerEmail,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        System.out.println("getBowlingBookingsByCustomerEmail was called");
+        return ResponseEntity.ok(bowlingBookingService.getBowlingBookingsByCustomerEmail(customerEmail, page, size));
     }
 
     @PatchMapping("/bowling/{id}")
