@@ -16,7 +16,7 @@ public class Shift {
     @Id @GeneratedValue
     private Long id;
 
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH, CascadeType.REMOVE}, fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Employee employee;
 
     private LocalDateTime start;
