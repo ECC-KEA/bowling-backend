@@ -121,16 +121,16 @@ public class InitData implements CommandLineRunner {
 
         for(var emp : dayShiftEmployees) {
             for(int i = 1; i < 14; i++) {
-                var start = LocalDateTime.now().plusDays(i).withHour(8);
-                var end = LocalDateTime.now().plusDays(i).withHour(16);
+                var start = LocalDateTime.now().plusDays(i).withHour(8).withMinute(0);
+                var end = LocalDateTime.now().plusDays(i).withHour(16).withMinute(0);
                 shiftService.createShift(new ShiftDTO(null, emp.getId(), start, end));
             }
         }
 
         for(var emp : nightShiftEmployees) {
             for(int i = 0; i < 14; i++) {
-                var start = LocalDateTime.now().plusDays(i).withHour(14);
-                var end = LocalDateTime.now().plusDays(i).withHour(22);
+                var start = LocalDateTime.now().plusDays(i).withHour(14).withMinute(0);
+                var end = LocalDateTime.now().plusDays(i).withHour(22).withMinute(0);
                 shiftService.createShift(new ShiftDTO(null, emp.getId(), start, end));
             }
         }
