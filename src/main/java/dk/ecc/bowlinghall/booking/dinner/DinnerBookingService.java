@@ -1,8 +1,13 @@
 package dk.ecc.bowlinghall.booking.dinner;
 
 import dk.ecc.bowlinghall.error.NotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -119,9 +124,10 @@ public class DinnerBookingService {
         return dinnerBookingRepository.findById(id).map(this::toDTO);
     }
 
-    public List<DinnerBookingDTO> getDinnerBookingsByEmail(String customerEmail) {
-        List<DinnerBooking> bookings = dinnerBookingRepository.findByCustomerEmail(customerEmail);
-        return bookings.stream().map(this::toDTO).toList();
+    public Page<DinnerBookingDTO> getDinnerBookingsByEmail(String customerEmail, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("start"));
+        Page<DinnerBooking> bookings = dinnerBookingRepository.findByCustomerEmailAndStartAfter(customerEmail, LocalDateTime.now(), pageable);
+        return bookings.map(this::toDTO);
     }
 
     public DinnerBookingDTO addDinnerBooking(DinnerBookingDTO dinnerBookingDTO) {

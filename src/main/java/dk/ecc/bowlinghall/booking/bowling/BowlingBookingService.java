@@ -1,14 +1,17 @@
 package dk.ecc.bowlinghall.booking.bowling;
 
-
 import dk.ecc.bowlinghall.booking.Status;
 import dk.ecc.bowlinghall.error.NotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -146,9 +149,10 @@ public class BowlingBookingService {
         return bowlingBookingRepository.findById(id).map(this::toDTO).orElseThrow(() -> new NotFoundException("Booking not found"));
     }
 
-    public List<BowlingBookingDTO> getBowlingBookingsByCustomerEmail(String customerEmail) {
-        List<BowlingBooking> bookings = bowlingBookingRepository.findByCustomerEmail(customerEmail);
-        return bookings.stream().map(this::toDTO).toList();
+    public Page<BowlingBookingDTO> getBowlingBookingsByCustomerEmail(String customerEmail, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("start"));
+        Page<BowlingBooking> bookings = bowlingBookingRepository.findByCustomerEmailAndStartAfter(customerEmail, LocalDateTime.now(), pageable);
+        return bookings.map(this::toDTO);
     }
 
     public Double getBowlingBookingPrice(Long id) {

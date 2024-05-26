@@ -1,5 +1,6 @@
 package dk.ecc.bowlinghall.booking.dinner;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +33,10 @@ public class DinnerBookingController {
     }
 
     @GetMapping("/dinner/email/{customerEmail}")
-    public List<DinnerBookingDTO> getDinnerBookingsByEmail(@PathVariable String customerEmail) {
-        return dinnerBookingService.getDinnerBookingsByEmail(customerEmail);
+    public ResponseEntity<Page<DinnerBookingDTO>> getDinnerBookingsByCustomerEmail(
+            @PathVariable String customerEmail,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(dinnerBookingService.getDinnerBookingsByEmail(customerEmail, page, size));
     }
 }

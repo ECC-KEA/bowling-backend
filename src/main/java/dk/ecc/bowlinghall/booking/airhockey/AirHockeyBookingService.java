@@ -1,14 +1,17 @@
 package dk.ecc.bowlinghall.booking.airhockey;
 
 import dk.ecc.bowlinghall.booking.Status;
-import dk.ecc.bowlinghall.booking.bowling.BowlingBooking;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import dk.ecc.bowlinghall.error.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -45,9 +48,10 @@ public class AirHockeyBookingService {
         return airHockeyBookingRepository.findById(id).map(this::toDTO);
     }
 
-    public List<AirHockeyBookingDTO> getAirHockeyBookingsByCustomerEmail(String customerEmail) {
-        List<AirHockeyBooking> bookings = airHockeyBookingRepository.findByCustomerEmail(customerEmail);
-        return bookings.stream().map(this::toDTO).toList();
+    public Page<AirHockeyBookingDTO> getAirHockeyBookingsByCustomerEmail(String customerEmail, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("start"));
+        Page<AirHockeyBooking> bookings = airHockeyBookingRepository.findByCustomerEmailAndStartAfter(customerEmail, LocalDateTime.now(), pageable);
+        return bookings.map(this::toDTO);
     }
 
     public AirHockeyBookingDTO updatePartialAirHockeyBooking(Long id, AirHockeyBookingDTO dto) {
