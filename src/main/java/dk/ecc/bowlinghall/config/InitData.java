@@ -3,6 +3,13 @@ package dk.ecc.bowlinghall.config;
 import dk.ecc.bowlinghall.admin.inventory.InventoryItemDTO;
 import dk.ecc.bowlinghall.admin.inventory.InventoryItemRepository;
 import dk.ecc.bowlinghall.admin.inventory.InventoryItemService;
+import dk.ecc.bowlinghall.admin.employee.EmpType;
+import dk.ecc.bowlinghall.admin.employee.Employee;
+import dk.ecc.bowlinghall.admin.employee.EmployeeRepository;
+import dk.ecc.bowlinghall.admin.schedule.Shift;
+import dk.ecc.bowlinghall.admin.schedule.ShiftDTO;
+import dk.ecc.bowlinghall.admin.schedule.ShiftRepository;
+import dk.ecc.bowlinghall.admin.schedule.ShiftService;
 import dk.ecc.bowlinghall.booking.Status;
 import dk.ecc.bowlinghall.booking.airhockey.*;
 import dk.ecc.bowlinghall.booking.bowling.*;
@@ -33,8 +40,11 @@ public class InitData implements CommandLineRunner {
     private final RestaurantRepository restaurantRepository;
     private final InventoryItemRepository inventoryItemRepository;
     private final InventoryItemService inventoryItemService;
+    private final EmployeeRepository employeeRepository;
+    private final ShiftRepository shiftRepository;
+    private final ShiftService shiftService;
 
-    public InitData(DinnerBookingRepository dinnerBookingRepository, BowlingBookingRepository bowlingBookingRepository, AirHockeyBookingRepository airHockeyBookingRepository, BowlingBookingService bowlingBookingService, AirHockeyBookingService airHockeyBookingService, DinnerBookingService dinnerBookingService, BowlingLaneRepository bowlingLaneRepository, AirHockeyTableRepository airHockeyTableRepository, RestaurantRepository restaurantRepository, InventoryItemRepository inventoryItemRepository, InventoryItemService inventoryItemService) {
+    public InitData(DinnerBookingRepository dinnerBookingRepository, BowlingBookingRepository bowlingBookingRepository, AirHockeyBookingRepository airHockeyBookingRepository, BowlingBookingService bowlingBookingService, AirHockeyBookingService airHockeyBookingService, DinnerBookingService dinnerBookingService, BowlingLaneRepository bowlingLaneRepository, AirHockeyTableRepository airHockeyTableRepository, RestaurantRepository restaurantRepository, InventoryItemRepository inventoryItemRepository, InventoryItemService inventoryItemService, EmployeeRepository employeeRepository, ShiftRepository shiftRepository, ShiftService shiftService) {
         this.dinnerBookingRepository = dinnerBookingRepository;
         this.bowlingBookingRepository = bowlingBookingRepository;
         this.airHockeyBookingRepository = airHockeyBookingRepository;
@@ -44,6 +54,9 @@ public class InitData implements CommandLineRunner {
         this.bowlingLaneRepository = bowlingLaneRepository;
         this.airHockeyTableRepository = airHockeyTableRepository;
         this.restaurantRepository = restaurantRepository;
+        this.employeeRepository = employeeRepository;
+        this.shiftRepository = shiftRepository;
+        this.shiftService = shiftService;
         this.inventoryItemRepository = inventoryItemRepository;
         this.inventoryItemService = inventoryItemService;
     }
@@ -71,7 +84,68 @@ public class InitData implements CommandLineRunner {
         if (inventoryItemRepository.count() == 0) {
             createInventoryItems();
         }
+        if (employeeRepository.count() == 0) {
+            createEmployees();
+        }
+        if (shiftRepository.count() == 0) {
+            createShifts();
+        }
 
+    }
+
+    private void createEmployees() {
+        var manager = new Employee(EmpType.MANAGER, "Jack", "Sparrow");
+        var operator = new Employee(EmpType.OPERATOR, "Will", "Turner");
+
+        var cleaning1 = new Employee(EmpType.CLEANING, "James", "Bond");
+        var cleaning2 = new Employee(EmpType.CLEANING, "Money", "Penny");
+
+        var employee0 = new Employee(EmpType.REGULAR, "Alice", "Johnson");
+        var employee1 = new Employee(EmpType.REGULAR, "Bob", "Smith");
+        var employee2 = new Employee(EmpType.REGULAR, "Carol", "Jones");
+        var employee3 = new Employee(EmpType.REGULAR, "Dave", "Brown");
+        var employee4 = new Employee(EmpType.REGULAR, "Eve", "White");
+        var employee5 = new Employee(EmpType.REGULAR, "Frank", "Green");
+        var employee6 = new Employee(EmpType.REGULAR, "Grace", "Black");
+        var employee7 = new Employee(EmpType.REGULAR, "Henry", "Blue");
+
+        employeeRepository.saveAll(List.of(manager, operator, cleaning1, cleaning2, employee0, employee1, employee2, employee3, employee4, employee5, employee6, employee7));
+    }
+
+    private void createShifts() {
+        var manager = employeeRepository.findByFirstName("Jack").orElseThrow();
+        var operator = employeeRepository.findByFirstName("Will").orElseThrow();
+
+        var cleaning1 = employeeRepository.findByFirstName("James").orElseThrow();
+        var cleaning2 = employeeRepository.findByFirstName("Money").orElseThrow();
+
+        var employee1 = employeeRepository.findByFirstName("Alice").orElseThrow();
+        var employee2 = employeeRepository.findByFirstName("Bob").orElseThrow();
+        var employee3 = employeeRepository.findByFirstName("Carol").orElseThrow();
+        var employee4 = employeeRepository.findByFirstName("Dave").orElseThrow();
+        var employee5 = employeeRepository.findByFirstName("Eve").orElseThrow();
+        var employee6 = employeeRepository.findByFirstName("Frank").orElseThrow();
+        var employee7 = employeeRepository.findByFirstName("Grace").orElseThrow();
+        var employee8 = employeeRepository.findByFirstName("Henry").orElseThrow();
+
+        var dayShiftEmployees = List.of(manager, operator, cleaning1, employee1, employee3, employee5, employee7);
+        var nightShiftEmployees = List.of(cleaning2, employee2, employee4, employee6, employee8);
+
+        for(var emp : dayShiftEmployees) {
+            for(int i = 1; i < 14; i++) {
+                var start = LocalDateTime.now().plusDays(i).withHour(8).withMinute(0);
+                var end = LocalDateTime.now().plusDays(i).withHour(16).withMinute(0);
+                shiftService.createShift(new ShiftDTO(null, emp.getId(), start, end));
+            }
+        }
+
+        for(var emp : nightShiftEmployees) {
+            for(int i = 0; i < 14; i++) {
+                var start = LocalDateTime.now().plusDays(i).withHour(14).withMinute(0);
+                var end = LocalDateTime.now().plusDays(i).withHour(22).withMinute(0);
+                shiftService.createShift(new ShiftDTO(null, emp.getId(), start, end));
+            }
+        }
     }
 
     private void createBowlingBookings() {
