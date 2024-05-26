@@ -4,6 +4,8 @@ import dk.ecc.bowlinghall.booking.Status;
 import dk.ecc.bowlinghall.booking.airhockey.*;
 import dk.ecc.bowlinghall.booking.bowling.*;
 import dk.ecc.bowlinghall.booking.dinner.*;
+import dk.ecc.bowlinghall.pos.product.SaleProduct;
+import dk.ecc.bowlinghall.pos.product.SaleProductRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -26,8 +28,9 @@ public class InitData implements CommandLineRunner {
     private final BowlingLaneRepository bowlingLaneRepository;
     private final AirHockeyTableRepository airHockeyTableRepository;
     private final RestaurantRepository restaurantRepository;
+    private final SaleProductRepository saleProductRepository;
 
-    public InitData(DinnerBookingRepository dinnerBookingRepository, BowlingBookingRepository bowlingBookingRepository, AirHockeyBookingRepository airHockeyBookingRepository, BowlingBookingService bowlingBookingService, AirHockeyBookingService airHockeyBookingService, DinnerBookingService dinnerBookingService, BowlingLaneRepository bowlingLaneRepository, AirHockeyTableRepository airHockeyTableRepository, RestaurantRepository restaurantRepository) {
+    public InitData(DinnerBookingRepository dinnerBookingRepository, BowlingBookingRepository bowlingBookingRepository, AirHockeyBookingRepository airHockeyBookingRepository, BowlingBookingService bowlingBookingService, AirHockeyBookingService airHockeyBookingService, DinnerBookingService dinnerBookingService, BowlingLaneRepository bowlingLaneRepository, AirHockeyTableRepository airHockeyTableRepository, RestaurantRepository restaurantRepository, SaleProductRepository saleProductRepository) {
         this.dinnerBookingRepository = dinnerBookingRepository;
         this.bowlingBookingRepository = bowlingBookingRepository;
         this.airHockeyBookingRepository = airHockeyBookingRepository;
@@ -37,6 +40,7 @@ public class InitData implements CommandLineRunner {
         this.bowlingLaneRepository = bowlingLaneRepository;
         this.airHockeyTableRepository = airHockeyTableRepository;
         this.restaurantRepository = restaurantRepository;
+        this.saleProductRepository = saleProductRepository;
     }
 
     @Override
@@ -59,7 +63,9 @@ public class InitData implements CommandLineRunner {
         if (dinnerBookingRepository.count() == 0) {
             createDinnerBookings();
         }
-
+        if (saleProductRepository.count() == 0) {
+            createSaleProducts();
+        }
     }
 
     private void createBowlingBookings() {
@@ -167,5 +173,32 @@ public class InitData implements CommandLineRunner {
                 new DinnerBookingDTO(null, "email@test.t", nextWeek.plusDays(2).withHour(19), nextWeek.plusDays(2).withHour(20), Status.BOOKED, 10)
         );
         bookings.forEach(dinnerBookingService::create);
+    }
+
+    private void createSaleProducts() {
+        saleProductRepository.save(new SaleProduct("Coca Cola", 20));
+        saleProductRepository.save(new SaleProduct("Fanta", 20));
+        saleProductRepository.save(new SaleProduct("Sprite", 20));
+        saleProductRepository.save(new SaleProduct("Pepsi", 20));
+        saleProductRepository.save(new SaleProduct("7up", 20));
+        saleProductRepository.save(new SaleProduct("Mountain Dew", 20));
+        saleProductRepository.save(new SaleProduct("Red Bull", 30));
+        saleProductRepository.save(new SaleProduct("Monster", 30));
+        saleProductRepository.save(new SaleProduct("Rockstar", 30));
+        saleProductRepository.save(new SaleProduct("Burn", 30));
+        saleProductRepository.save(new SaleProduct("Battery", 30));
+        saleProductRepository.save(new SaleProduct("Cult", 30));
+        saleProductRepository.save(new SaleProduct("Carlsberg", 25));
+        saleProductRepository.save(new SaleProduct("Tuborg", 25));
+        saleProductRepository.save(new SaleProduct("Heineken", 25));
+        saleProductRepository.save(new SaleProduct("Corona", 25));
+        saleProductRepository.save(new SaleProduct("Guinness", 25));
+        saleProductRepository.save(new SaleProduct("Budweiser", 25));
+        saleProductRepository.save(new SaleProduct("Jack Daniels", 40));
+        saleProductRepository.save(new SaleProduct("Jim Beam", 40));
+        saleProductRepository.save(new SaleProduct("Johnnie Walker", 40));
+        saleProductRepository.save(new SaleProduct("Jameson", 40));
+        saleProductRepository.save(new SaleProduct("Glenfiddich", 40));
+        saleProductRepository.save(new SaleProduct("Chivas Regal", 40));
     }
 }

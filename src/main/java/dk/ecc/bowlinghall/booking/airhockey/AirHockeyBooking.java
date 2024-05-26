@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Entity
@@ -22,5 +23,9 @@ public class AirHockeyBooking extends Booking {
     public AirHockeyBooking(String customerEmail, LocalDateTime start, LocalDateTime end, AirHockeyTable table) {
         super(customerEmail, start, end);
         this.table = table;
+    }
+
+    public double CalculatePrice() {
+        return table.getPricePerHour() * Duration.between(this.getStart(), this.getEnd()).toHours();
     }
 }

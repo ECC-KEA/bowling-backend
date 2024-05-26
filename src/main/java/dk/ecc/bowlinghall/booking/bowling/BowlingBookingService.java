@@ -150,4 +150,8 @@ public class BowlingBookingService {
         List<BowlingBooking> bookings = bowlingBookingRepository.findByCustomerEmail(customerEmail);
         return bookings.stream().map(this::toDTO).toList();
     }
+
+    public Double getBowlingBookingPrice(Long id) {
+        return bowlingBookingRepository.findById(id).map(BowlingBooking::CalculatePrice).orElseThrow(() -> new NotFoundException("Booking not found"));
+    }
 }

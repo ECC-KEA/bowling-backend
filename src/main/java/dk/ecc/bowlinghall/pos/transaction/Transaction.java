@@ -17,4 +17,8 @@ public class Transaction {
     private Long id;
 
     private double amount;
+
+    public Transaction(double amount) {
+        this.amount = amount;
+    }
 }

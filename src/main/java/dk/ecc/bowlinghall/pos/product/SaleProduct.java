@@ -17,4 +17,9 @@ public class SaleProduct {
     private Long id;
     private String name;
     private double price;
+
+    public SaleProduct(String name, double price) {
+        this.name = name;
+        this.price = price;
+    }
 }

@@ -1,6 +1,8 @@
 package dk.ecc.bowlinghall.booking.airhockey;
 
 import dk.ecc.bowlinghall.booking.Status;
+import dk.ecc.bowlinghall.booking.bowling.BowlingBooking;
+import dk.ecc.bowlinghall.error.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
@@ -121,5 +123,10 @@ public class AirHockeyBookingService {
                 bookingDTO.end(),
                 airHockeyTableService.findFirstAvailableAirHockeyTable(bookingDTO.start(), bookingDTO.end())
         );
+    }
+
+    public Double getAirHockeyBookingPrice(Long id) {
+        return airHockeyBookingRepository.findById(id).map(AirHockeyBooking::CalculatePrice).orElseThrow(() -> new NotFoundException("Booking not found"));
+
     }
 }

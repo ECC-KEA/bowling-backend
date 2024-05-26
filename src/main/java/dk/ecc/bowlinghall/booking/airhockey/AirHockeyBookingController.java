@@ -55,5 +55,8 @@ public class AirHockeyBookingController {
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
-
+    @GetMapping("/airhockey/{id}/price")
+    public ResponseEntity<Double> getAirHockeyBookingPrice(@PathVariable Long id) {
+        return ResponseEntity.ok(airHockeyBookingService.getAirHockeyBookingPrice(id));
+    }
 }

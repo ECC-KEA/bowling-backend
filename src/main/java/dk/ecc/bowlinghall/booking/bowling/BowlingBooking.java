@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Entity
@@ -21,5 +22,9 @@ public class BowlingBooking extends Booking {
     public BowlingBooking(String customerEmail, LocalDateTime start, LocalDateTime end, BowlingLane lane) {
         super(customerEmail, start, end);
         this.lane = lane;
+    }
+
+    public double CalculatePrice() {
+        return lane.getPricePerHour() * Duration.between(this.getStart(), this.getEnd()).toHours();
     }
 }
